@@ -1,26 +1,221 @@
 @import "tailwindcss";
 
+/* Satoshi + Clash Display load via <link> tags in layout.tsx
+   (Fontshare CDN — @import here gets reordered after Tailwind's rules and ignored) */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base — black */
+  --background: #000000;
+  --surface: #0f0f0f;
+  --surface-2: #1a1a1a;
+
+  /* Shimmer silver */
+  --silver: #c0c0c0;
+  --silver-dim: #8a8a8a;
+
+  /* Text */
+  --foreground: #f5f5f5;
+  --text-dim: #a0a0a0;
+
+  /* Lines / borders */
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.22);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-silver: var(--silver);
+  --color-silver-dim: var(--silver-dim);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-dim: var(--text-dim);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Satoshi", var(--font-inter), sans-serif;
+  --font-clash: "Clash Display", "Satoshi", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
+  margin: 0;
+  padding: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* clip, not hidden — overflow:hidden on html/body breaks position:sticky */
+  overflow-x: clip;
+}
+
+body.locked {
+  overflow: hidden;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+.font-clash {
+  font-family: var(--font-clash);
+  letter-spacing: -0.02em;
+}
+
+/* ---------- Selection ---------- */
+::selection {
+  background: var(--silver);
+  color: #000;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+/* ---------- Hide native cursor on desktop ----------
+   Enable once a custom cursor component exists.
+@media (pointer: fine) {
+  body, a, button, input, textarea, [data-cursor] { cursor: none !important; }
+}
+*/
+
+/* ---------- Reusable utilities ---------- */
+.silver-text {
+  background: linear-gradient(180deg, #f5f5f5 0%, #c0c0c0 60%, #6e6e6e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.metallic-border {
+  position: relative;
+  background: linear-gradient(180deg, #0d0d0d, #050505);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.metallic-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25),
+    rgba(255, 255, 255, 0) 35%,
+    rgba(255, 255, 255, 0) 65%,
+    rgba(255, 255, 255, 0.18)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+
+/* ---------- Reveal mask helper ---------- */
+.reveal-line {
+  overflow: hidden;
+  display: inline-block;
+}
+.reveal-line > span {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ---------- Marquee ---------- */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+
+/* ---------- Shine button effect ---------- */
+.shine {
+  position: relative;
+  overflow: hidden;
+}
+.shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.7s ease;
+}
+.shine:hover::after {
+  left: 130%;
+}
+
+/* ---------- Spotlight container ---------- */
+.spotlight-bg {
+  background: radial-gradient(
+      600px circle at var(--mx, 50%) var(--my, 40%),
+      rgba(255, 255, 255, 0.08),
+      transparent 60%
+    ),
+    #000;
+}
+
+/* ---------- Loader silver line ---------- */
+.loader-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c0c0c0 50%, transparent);
+  width: 100%;
+}
+
+/* ---------- Focus ring (minimal) ---------- */
+input:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+input:focus,
+textarea:focus {
+  border-bottom-color: #f5f5f5 !important;
+}
+
+@layer utilities {
+  .common-padding {
+    padding: 1.25rem;
+  }
 }
