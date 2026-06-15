@@ -13,11 +13,10 @@ export const NAV_LINKS = [
   { label: "Contact", href: "#contact" },
 ];
 
-// TODO: fill in real profile URLs
 export const SOCIAL_LINKS = [
-  { label: "GitHub", href: "https://github.com/" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/" },
-  { label: "LeetCode", href: "https://leetcode.com/" },
+  { label: "GitHub", href: "https://github.com/Maheswarichandrani" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/chandrani-maheswari-70a034290/" },
+  { label: "LeetCode", href: "https://leetcode.com/u/Maheswarichandrani/" },
   { label: "Email", href: "mailto:chandranimaheswari13@gmail.com" },
 ];
 

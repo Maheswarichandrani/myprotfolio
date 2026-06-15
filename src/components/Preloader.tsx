@@ -29,6 +29,7 @@ export default function Preloader() {
       const tl = gsap.timeline({
         defaults: { ease: "power3.out" },
         onComplete: () => {
+          (window as Window & { __preloaderDone?: boolean }).__preloaderDone = true;
           window.dispatchEvent(new CustomEvent("preloader:done"));
           setDone(true);
         },
