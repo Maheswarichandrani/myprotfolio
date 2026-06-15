@@ -1,5 +1,6 @@
 import AboutSection from "@/components/AboutSection";
 import ProjectsSection from "@/components/ProjectsSection";
+import AcademicSection from "@/components/AcademicSection";
 import ClosingSection from "@/components/ClosingSection";
 import Footer from "@/components/Footer";
 import ScrollCue from "@/components/ScrollCue";
@@ -20,6 +21,8 @@ export default function Home() {
         <AboutSection />
 
         <ProjectsSection />
+
+        <AcademicSection />
 
         {/* contact form slots in here later */}
 

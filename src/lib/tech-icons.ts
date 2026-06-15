@@ -16,7 +16,11 @@ import {
   SiMongodb,
   SiExpress,
   SiNodedotjs,
+  SiPython,
 } from "react-icons/si";
+import { FaJava } from "react-icons/fa";
+import { TbBrandReactNative } from "react-icons/tb";
+import { LuBrain } from "react-icons/lu";
 
 /** brand glyphs for tech-stack labels; render as currentColor (monochrome) */
 export const TECH_ICONS: Record<string, IconType> = {
@@ -36,4 +40,8 @@ export const TECH_ICONS: Record<string, IconType> = {
   MongoDB: SiMongodb,
   "Express.js": SiExpress,
   "Node.js": SiNodedotjs,
+  Python: SiPython,
+  Java: FaJava,
+  "React Native": TbBrandReactNative,
+  "AI/ML": LuBrain,
 };

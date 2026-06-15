@@ -65,8 +65,7 @@ export const PROJECTS: Project[] = [
     tech: ["Next.js", "TypeScript", "Tailwind CSS"],
     status: "Live",
     link: "#",
-    image:
-      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80",
+    image: "/nala-armoire.png",
   },
   {
     title: "TreeKart",
@@ -77,8 +76,42 @@ export const PROJECTS: Project[] = [
     tech: ["Next.js", "TypeScript", "Tailwind CSS"],
     status: "Live",
     link: "#",
+    image: "/treekart.png",
+  },
+];
+
+export type AcademicProject = {
+  name: string;
+  tagline: string;
+  description: string;
+  achievement: string;
+  tech: string[];
+  github?: string;
+  image: string;
+};
+
+export const ACADEMIC_PROJECTS: AcademicProject[] = [
+  {
+    name: "DeepNox",
+    tagline: "AI Deepfake Detection",
+    description:
+      "AI-powered deepfake detection browser extension that analyzes images, videos, and audio across social media platforms in real time.",
+    achievement: "Hackathon Top 5 Winner",
+    tech: ["React", "TypeScript", "Node.js", "Python"],
+    github: "#",
     image:
-      "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1400&q=80",
+  },
+  {
+    name: "HealVerse",
+    tagline: "AI Healthcare Ecosystem",
+    description:
+      "AI-driven healthcare platform connecting patients and care through intelligent diagnostics, built with a mobile-first cross-platform stack.",
+    achievement: "Hackathon 1st Prize Winner",
+    tech: ["React Native", "Spring Boot", "Java", "AI/ML"],
+    github: "#",
+    image:
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1400&q=80",
   },
 ];
 
