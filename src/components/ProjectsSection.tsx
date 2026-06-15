@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { LUXE } from "@/lib/ease";
 import { PROJECTS } from "@/data/profile";
+import { TECH_ICONS } from "@/lib/tech-icons";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -57,36 +58,69 @@ export default function ProjectsSection() {
         },
       });
 
-      gsap.utils.toArray<HTMLElement>(".proj-slide").forEach((slide) => {
-        const inView = {
-          trigger: slide,
-          containerAnimation: tween,
-          start: "left 75%",
-          toggleActions: "play none none reverse",
-        };
-        gsap
-          .timeline({ scrollTrigger: inView })
-          .from(slide.querySelector(".proj-num"), {
-            opacity: 0,
-            x: -80,
-            duration: 0.9,
-            ease: LUXE,
-          })
-          .from(
-            slide.querySelector(".proj-title"),
-            { opacity: 0, y: 50, duration: 0.9, ease: LUXE },
-            "-=0.6"
-          )
-          .from(
-            slide.querySelectorAll(".proj-copy"),
-            { opacity: 0, y: 30, duration: 0.8, stagger: 0.08, ease: LUXE },
-            "-=0.6"
-          )
-          .from(
-            slide.querySelector(".proj-img"),
-            { opacity: 0, scale: 1.1, duration: 1.1, ease: LUXE },
-            "<-=0.1"
+      const ROUND_FROM = 96; // px — heavily rounded on entry
+      const ROUND_TO = 24; // px — resting frame (matches rounded-3xl)
+
+      gsap.utils.toArray<HTMLElement>(".proj-slide").forEach((slide, i) => {
+        const img = slide.querySelector<HTMLElement>(".proj-img");
+        // start every image rounded; it squares to its frame as it reveals
+        gsap.set(img, { borderRadius: ROUND_FROM });
+
+        const build = (tl: gsap.core.Timeline) =>
+          tl
+            .from(slide.querySelector(".proj-num"), {
+              opacity: 0,
+              x: -80,
+              duration: 0.9,
+              ease: LUXE,
+            })
+            .from(
+              slide.querySelector(".proj-title"),
+              { opacity: 0, y: 50, duration: 0.9, ease: LUXE },
+              "-=0.6"
+            )
+            .from(
+              slide.querySelectorAll(".proj-copy"),
+              { opacity: 0, y: 30, duration: 0.8, stagger: 0.08, ease: LUXE },
+              "-=0.6"
+            )
+            .fromTo(
+              img,
+              { opacity: 0, scale: 1.1, borderRadius: ROUND_FROM },
+              {
+                opacity: 1,
+                scale: 1,
+                borderRadius: ROUND_TO,
+                duration: 1.2,
+                ease: LUXE,
+              },
+              "<-=0.1"
+            );
+
+        if (i === 0) {
+          // first slide is already on-screen when the section pins —
+          // reveal it as the section scrolls in, not on horizontal drift
+          build(
+            gsap.timeline({
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 55%",
+                toggleActions: "play none none reverse",
+              },
+            })
           );
+        } else {
+          build(
+            gsap.timeline({
+              scrollTrigger: {
+                trigger: slide,
+                containerAnimation: tween,
+                start: "left 78%",
+                toggleActions: "play none none reverse",
+              },
+            })
+          );
+        }
 
         // subtle vertical parallax against the horizontal drift
         gsap.fromTo(
@@ -187,14 +221,18 @@ export default function ProjectsSection() {
                   )}
 
                   <div className="proj-copy mt-4 flex flex-wrap gap-1.5 lg:mt-5 lg:gap-2">
-                    {project.tech.map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full border border-line bg-white/[0.04] px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-foreground/75 lg:border-line-strong lg:bg-white/[0.05] lg:px-3.5 lg:py-1.5 lg:text-[10px] lg:tracking-[0.12em] lg:text-foreground/85"
-                      >
-                        {t}
-                      </span>
-                    ))}
+                    {project.tech.map((t) => {
+                      const Icon = TECH_ICONS[t];
+                      return (
+                        <span
+                          key={t}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white/[0.04] px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-foreground/75 lg:border-line-strong lg:bg-white/[0.05] lg:px-3.5 lg:py-1.5 lg:text-[10px] lg:tracking-[0.12em] lg:text-foreground/85"
+                        >
+                          {Icon && <Icon className="text-silver text-[1.15em]" />}
+                          {t}
+                        </span>
+                      );
+                    })}
                   </div>
 
                   <div className="proj-copy mt-5 flex items-center justify-between gap-4 border-t border-line pt-4 lg:mt-7 lg:justify-start lg:gap-6 lg:border-0 lg:pt-0">
@@ -202,7 +240,7 @@ export default function ProjectsSection() {
                       href={project.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="shine inline-flex items-center gap-2 rounded-full border border-line-strong px-5 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-foreground transition-colors duration-300 hover:bg-white/[0.06] lg:px-6 lg:py-2.5"
+                      className="btn-silver inline-flex items-center gap-2 rounded-full px-5 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] shadow-[0_4px_20px_rgba(192,192,192,0.18)] transition-transform duration-300 hover:-translate-y-0.5 lg:px-6 lg:py-2.5"
                     >
                       View Live <span aria-hidden>↗</span>
                     </a>

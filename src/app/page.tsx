@@ -2,6 +2,7 @@ import AboutSection from "@/components/AboutSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import ClosingSection from "@/components/ClosingSection";
 import Footer from "@/components/Footer";
+import ScrollCue from "@/components/ScrollCue";
 
 export default function Home() {
   return (
@@ -9,10 +10,11 @@ export default function Home() {
       {/* content layer — solid bg covers the fixed footer underneath */}
       <main className="relative z-10 bg-background">
         {/* hero — placeholder, designed later */}
-        <section className="flex h-screen items-center justify-center">
+        <section className="relative flex h-screen items-center justify-center">
           <h1 className="silver-text font-clash text-6xl font-semibold">
             Portfolio
           </h1>
+          <ScrollCue />
         </section>
 
         <AboutSection />

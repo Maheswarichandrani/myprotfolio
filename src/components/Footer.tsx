@@ -78,7 +78,7 @@ export default function Footer() {
         Maheswari
       </span>
 
-      <div className="relative z-10 px-6 pt-16 pb-8 sm:px-10 lg:px-14">
+      <div className="relative z-10 px-6 pt-16 pb-36 sm:px-10 lg:px-14 lg:pt-24 lg:pb-64">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           <div className="ft-item">
             <p className="font-clash text-xl font-medium text-foreground">
