@@ -7,7 +7,7 @@ const LINKS = [
   { label: "About", href: "#about" },
   { label: "Work", href: "#projects" },
   { label: "Academics", href: "#academic" },
-  { label: "Contact", href: "mailto:chandranimaheswari13@gmail.com" },
+  { label: "Contact", href: "#contact" },
 ];
 
 const CTA = { label: "Hire Me", href: "mailto:chandranimaheswari13@gmail.com" };

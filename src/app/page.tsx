@@ -3,6 +3,7 @@ import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import AcademicSection from "@/components/AcademicSection";
+import ContactSection from "@/components/ContactSection";
 import ClosingSection from "@/components/ClosingSection";
 import Footer from "@/components/Footer";
 
@@ -22,7 +23,7 @@ export default function Home() {
 
         <AcademicSection />
 
-        {/* contact form slots in here later */}
+        <ContactSection />
 
         <ClosingSection />
       </main>
