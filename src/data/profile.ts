@@ -51,7 +51,7 @@ export const PROJECTS: Project[] = [
     tech: ["Next.js", "NestJS", "TypeScript", "TanStack Query", "Better Auth", "PostgreSQL"],
     status: "Currently Building",
     highlight: "Flagship Product",
-    link: "#",
+    link: "https://creonex.in",
     image: "/creonex.png",
   },
   {
@@ -62,7 +62,7 @@ export const PROJECTS: Project[] = [
     role: "Full Stack Developer",
     tech: ["Next.js", "TypeScript", "Tailwind CSS"],
     status: "Live",
-    link: "#",
+    link: "https://nalaarmoire.com",
     image: "/nala-armoire.png",
   },
   {
@@ -73,7 +73,7 @@ export const PROJECTS: Project[] = [
     role: "Full Stack Developer",
     tech: ["Next.js", "TypeScript", "Tailwind CSS"],
     status: "Live",
-    link: "#",
+    link: "https://treekart.in",
     image: "/treekart.png",
   },
 ];
@@ -108,8 +108,7 @@ export const ACADEMIC_PROJECTS: AcademicProject[] = [
     achievement: "Hackathon 1st Prize Winner",
     tech: ["React Native", "Spring Boot", "Java", "AI/ML"],
     github: "#",
-    image:
-      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1400&q=80",
+    image: "/healverse.png",
   },
 ];
 
@@ -120,6 +119,8 @@ export type AboutSlide = {
   tags: string[];
   /** swap in a real image path later; gradient placeholder renders when undefined */
   image?: string;
+  /** optional live link rendered as a "View Live" action */
+  link?: { label: string; href: string };
 };
 
 export const ABOUT_SLIDES: AboutSlide[] = [
@@ -135,7 +136,8 @@ export const ABOUT_SLIDES: AboutSlide[] = [
     title: "Shipping in production at J33.ai",
     body: "Software Engineering Intern contributing to InfyClasses.com — frontend architecture, modern data-fetching patterns, and scalable application design. Freelancing on production-grade applications alongside.",
     tags: ["React", "Redux", "TanStack Query", "FastAPI", "Redis", "PostgreSQL"],
-    image: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&w=1000&q=80",
+    image: "/infyclasses.png",
+    link: { label: "InfyClasses.com", href: "https://infyclasses.com" },
   },
   {
     label: "What I Build",
@@ -149,6 +151,6 @@ export const ABOUT_SLIDES: AboutSlide[] = [
     title: "Sharpening the edge",
     body: "450+ LeetCode problems solved. 4+ hackathons with multiple prizes — 1st with HealVerse, 5th with DeepNox. Certified learning across ML, Deep Learning, and NLP. Seeking software engineering roles with impact.",
     tags: ["450+ LeetCode", "Hackathon Winner", "ML · DL · NLP"],
-    image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1000&q=80",
+    image: "/leetcode.png",
   },
 ];

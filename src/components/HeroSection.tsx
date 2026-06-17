@@ -23,12 +23,12 @@ const PHOTOS = [
 /* Round ring — 6 cards evenly framing the centred content (clockwise   */
 /* from top-left). Even hexagonal spread so the scatter reads "round".  */
 const TARGETS_DESKTOP = [
-  { x: "-34vw", y: "-27vh", r: -6 }, // top-left
-  { x: "34vw", y: "-27vh", r: 6 }, //  top-right
-  { x: "44vw", y: "5vh", r: 4 }, //    right
-  { x: "30vw", y: "30vh", r: -5 }, //  bottom-right
-  { x: "-30vw", y: "30vh", r: 5 }, //  bottom-left
-  { x: "-44vw", y: "5vh", r: -4 }, //  left
+  { x: "-29vw", y: "-29vh", r: -6 }, // top-left
+  { x: "29vw", y: "-29vh", r: 6 }, //  top-right
+  { x: "39vw", y: "3vh", r: 4 }, //    right
+  { x: "25vw", y: "31vh", r: -5 }, //  bottom-right
+  { x: "-25vw", y: "31vh", r: 5 }, //  bottom-left
+  { x: "-39vw", y: "3vh", r: -4 }, //  left
 ];
 
 /* Mobile: two rows (top + bottom) so the whole horizontal middle band   */
@@ -213,7 +213,7 @@ export default function HeroSection() {
             onMouseEnter={onEnter}
             onMouseLeave={onLeave}
             style={{ willChange: "transform, opacity" }}
-            className="photo-card absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-[4/3] w-[5.5rem] cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-[2px] sm:w-36 md:w-44 lg:w-52 xl:w-60"
+            className="photo-card absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-[4/3] w-[6.25rem] cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-[2px] sm:w-40 md:w-48 lg:w-56 xl:w-64"
           >
             <img
               src={photo.src}
@@ -231,13 +231,14 @@ export default function HeroSection() {
       </div>
 
       {/* Centre brand text */}
-      <div className="hero-content relative z-20 flex max-w-[90%] flex-col items-center text-center sm:max-w-lg md:max-w-xl lg:max-w-2xl">
-        <p className="hero-fade font-mono text-xs uppercase tracking-[0.3em] text-silver-dim sm:text-[13px]">
+      <div className="hero-content relative z-20 flex max-w-[88%] flex-col items-center text-center sm:max-w-md md:max-w-lg lg:max-w-xl">
+        <p className="hero-fade font-mono text-[11px] uppercase tracking-[0.3em] text-silver-dim sm:text-sm">
           Hi, I&apos;m Chandrani Maheswari
         </p>
-        <p className="hero-fade mt-6 max-w-[46ch] text-sm leading-relaxed text-dim lg:text-base">
-          Passionate about building impactful products, solving real-world problems, and turning
-          innovative ideas into meaningful solutions.
+        <p className="hero-fade mt-5 max-w-[28ch] text-balance text-lg font-medium leading-snug text-foreground sm:text-xl md:text-2xl lg:text-[1.7rem]">
+          Full-stack developer crafting production-grade products —{" "}
+          <span className="silver-text">integrating AI</span> to build smarter,
+          more intuitive experiences.
         </p>
         <div className="hero-fade mt-9 flex flex-wrap justify-center gap-4">
           <a

@@ -185,6 +185,18 @@ export default function AboutSection() {
                   <p className="mt-4 max-w-[52ch] text-sm leading-relaxed text-dim lg:text-base">
                     {slide.body}
                   </p>
+                  {slide.link && (
+                    <a
+                      href={slide.link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="shine mt-5 inline-flex items-center gap-2 rounded-full border border-line-strong px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
+                    >
+                      View Live — {slide.link.label}
+                      <span aria-hidden>↗</span>
+                    </a>
+                  )}
                   <div className="mt-5 flex max-w-[52ch] flex-wrap gap-2 rounded-xl border border-line bg-white/[0.03] p-4">
                     {slide.tags.map((tag, ti) => (
                       <span

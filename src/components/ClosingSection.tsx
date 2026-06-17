@@ -9,10 +9,10 @@ import { LUXE } from "@/lib/ease";
 gsap.registerPlugin(ScrollTrigger);
 
 const LINES = [
-  { text: "Building the", silver: false },
-  { text: "Future", silver: true },
-  { text: "One Product", silver: false },
-  { text: "At a Time", silver: true },
+  { text: "Engineering", silver: false },
+  { text: "Ideas", silver: true },
+  { text: "Into Real", silver: false },
+  { text: "Impact", silver: true },
 ];
 
 export default function ClosingSection() {
@@ -69,8 +69,8 @@ export default function ClosingSection() {
         className="flex flex-col items-center text-center will-change-transform"
       >
         <p className="cl-meta font-mono text-[10px] uppercase tracking-[0.35em] text-dim sm:text-[11px]">
-          Full Stack Developer <span className="text-white/20">•</span> Software
-          Engineer <span className="text-white/20">•</span>{" "}
+          Full Stack Developer <span className="text-white/20">•</span> AI Builder{" "}
+          <span className="text-white/20">•</span>{" "}
           <span className="text-silver">Open to Work</span>
         </p>
 
@@ -89,10 +89,11 @@ export default function ClosingSection() {
         </h2>
 
         <p className="cl-meta mt-10 font-mono text-[10px] uppercase tracking-[0.3em] text-silver">
-          Based in India
+          Chandrani Maheswari <span className="text-white/20">•</span> Based in India
         </p>
-        <p className="cl-meta mt-3 max-w-[40ch] text-sm leading-relaxed text-dim">
-          Building modern web applications and digital products.
+        <p className="cl-meta mt-3 max-w-[44ch] text-sm leading-relaxed text-dim">
+          Full-stack engineer integrating AI to build production-grade products
+          that solve real-world problems.
         </p>
       </div>
     </section>
