@@ -52,7 +52,7 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <a
             href={CTA.href}
-            className="hidden rounded-full bg-[#ece7dd] px-5 py-2 font-mono text-xs font-semibold uppercase tracking-[0.1em] text-black transition-colors hover:bg-white md:inline-flex"
+            className="hidden rounded-[6px] bg-[#ece7dd] px-5 py-2 font-sans text-xs font-semibold text-black transition-colors hover:bg-white md:inline-flex"
           >
             {CTA.label}
           </a>
@@ -88,7 +88,7 @@ export default function Navbar() {
             <a
               href={CTA.href}
               onClick={() => setOpen(false)}
-              className="mt-1 block rounded-2xl bg-[#ece7dd] px-4 py-3 text-center font-mono text-xs font-semibold uppercase tracking-[0.1em] text-black transition-colors hover:bg-white"
+              className="mt-1 block rounded-[6px] bg-[#ece7dd] px-4 py-3 text-center font-sans text-xs font-semibold text-black transition-colors hover:bg-white"
             >
               {CTA.label}
             </a>

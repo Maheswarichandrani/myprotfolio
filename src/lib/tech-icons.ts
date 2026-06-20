@@ -17,6 +17,7 @@ import {
   SiExpress,
   SiNodedotjs,
   SiPython,
+  SiSanity,
 } from "react-icons/si";
 import { FaJava } from "react-icons/fa";
 import { TbBrandReactNative } from "react-icons/tb";
@@ -41,6 +42,7 @@ export const TECH_ICONS: Record<string, IconType> = {
   "Express.js": SiExpress,
   "Node.js": SiNodedotjs,
   Python: SiPython,
+  Sanity: SiSanity,
   Java: FaJava,
   "React Native": TbBrandReactNative,
   "AI/ML": LuBrain,

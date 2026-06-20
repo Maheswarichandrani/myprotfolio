@@ -149,14 +149,26 @@ export default function AcademicSection() {
                 </div>
               </div>
 
-              <a
-                href={p.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="acad-anim inline-flex items-center justify-center gap-2 rounded-full border border-line-strong px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
-              >
-                View GitHub <span aria-hidden>↗</span>
-              </a>
+              {p.github && (
+                <a
+                  href={p.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="acad-anim inline-flex items-center justify-center gap-2 rounded-[6px] border border-line-strong px-5 py-2.5 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
+                >
+                  View GitHub <span aria-hidden>↗</span>
+                </a>
+              )}
+              {p.link && (
+                <a
+                  href={p.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="acad-anim inline-flex items-center justify-center gap-2 rounded-[6px] border border-line-strong px-5 py-2.5 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
+                >
+                  View Live <span aria-hidden>↗</span>
+                </a>
+              )}
             </div>
           </article>
         </div>

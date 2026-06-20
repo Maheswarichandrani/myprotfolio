@@ -85,6 +85,7 @@ export type AcademicProject = {
   achievement: string;
   tech: string[];
   github?: string;
+  link?: string;
   image: string;
 };
 
@@ -96,9 +97,8 @@ export const ACADEMIC_PROJECTS: AcademicProject[] = [
       "AI-powered deepfake detection browser extension that analyzes images, videos, and audio across social media platforms in real time.",
     achievement: "Hackathon Top 5 Winner",
     tech: ["React", "TypeScript", "Node.js", "Python"],
-    github: "#",
-    image:
-      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1400&q=80",
+    github: "https://github.com/Srikar132/deep-nox.git",
+    image: "/deepnox.png",
   },
   {
     name: "HealVerse",
@@ -107,8 +107,18 @@ export const ACADEMIC_PROJECTS: AcademicProject[] = [
       "AI-driven healthcare platform connecting patients and care through intelligent diagnostics, built with a mobile-first cross-platform stack.",
     achievement: "Hackathon 1st Prize Winner",
     tech: ["React Native", "Spring Boot", "Java", "AI/ML"],
-    github: "#",
+    github: "https://github.com/Ashok-Dd/healverse.git",
     image: "/healverse.png",
+  },
+  {
+    name: "InfraInk",
+    tagline: "Developer Blogging Platform",
+    description:
+      "A modern developer-focused blogging platform that enables writers to publish tech articles, and readers to bookmark, search, and engage with content in real time.",
+    achievement: "Full Stack Platform",
+    tech: ["Next.js", "TypeScript", "Tailwind CSS", "Sanity"],
+    link: "https://infraink.vercel.app/",
+    image: "/infraink.png",
   },
 ];
 

@@ -240,7 +240,7 @@ export default function ProjectsSection() {
                       href={project.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-silver inline-flex items-center gap-2 rounded-full px-5 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] shadow-[0_4px_20px_rgba(192,192,192,0.18)] transition-transform duration-300 hover:-translate-y-0.5 lg:px-6 lg:py-2.5"
+                      className="btn-silver inline-flex items-center gap-2 rounded-[6px] px-5 py-2.5 font-sans text-sm font-semibold transition-transform duration-300 hover:-translate-y-0.5 lg:px-6 lg:py-2.5"
                     >
                       View Live <span aria-hidden>↗</span>
                     </a>

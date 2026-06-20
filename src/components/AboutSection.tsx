@@ -191,7 +191,7 @@ export default function AboutSection() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="shine mt-5 inline-flex items-center gap-2 rounded-full border border-line-strong px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
+                      className="mt-5 inline-flex items-center gap-2 rounded-[6px] border border-line-strong px-4 py-2.5 font-sans text-xs font-medium text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
                     >
                       View Live — {slide.link.label}
                       <span aria-hidden>↗</span>

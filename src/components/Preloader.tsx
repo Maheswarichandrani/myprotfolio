@@ -8,9 +8,6 @@ import { PROFILE } from "@/data/profile";
 // Shown once per browser — flag persists in localStorage across reloads.
 const SEEN_KEY = "portfolio:preloaded";
 
-// 0..100 — each odometer reel renders one digit slice of these values.
-const DIGITS: number[] = Array.from({ length: 101 }, (_, i) => i);
-
 const markDone = () => {
   (window as Window & { __preloaderDone?: boolean }).__preloaderDone = true;
   window.dispatchEvent(new CustomEvent("preloader:done"));
@@ -26,12 +23,6 @@ export default function Preloader() {
   const barRef = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLDivElement>(null);
   const roleRef = useRef<HTMLParagraphElement>(null);
-  // Odometer reels — each is a vertical column scrolled by one shared value.
-  const unitsRef = useRef<HTMLDivElement>(null);
-  const tensRef = useRef<HTMLDivElement>(null);
-  const hundredsRef = useRef<HTMLDivElement>(null);
-  const tensWrapRef = useRef<HTMLDivElement>(null);
-  const hundredsWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (done) return;
@@ -70,35 +61,23 @@ export default function Preloader() {
         },
       });
 
-      // Odometer: 0..100 lives in a 101-cell column; shifting the column by
-      // one shared value rolls every reel in lock-step. quickSetter avoids
-      // per-frame allocations (GSAP's recommended high-frequency setter).
-      const CELLS = 101; // values 0..100
-      const PER_CELL = 100 / CELLS; // yPercent shift per single digit step
-      const setU = gsap.quickSetter(unitsRef.current, "yPercent");
-      const setT = gsap.quickSetter(tensRef.current, "yPercent");
-      const setH = gsap.quickSetter(hundredsRef.current, "yPercent");
       const setBar = gsap.quickSetter(lineRef.current, "scaleX");
+      const counterText = document.getElementById("preloader-counter-text");
 
       const draw = () => {
         const v = counter.v;
-        const y = -v * PER_CELL;
-        setU(y);
-        setT(y);
-        setH(y);
+        if (counterText) {
+          counterText.textContent = String(Math.round(v));
+        }
         setBar(v / 100);
-        // Reveal higher digits only once they're actually reached (no "007").
-        gsap.set(tensWrapRef.current, { autoAlpha: v >= 9.5 ? 1 : 0 });
-        gsap.set(hundredsWrapRef.current, { autoAlpha: v >= 99.5 ? 1 : 0 });
       };
 
       // phase 1 — frame in, then count up smoothly through every number
       tl.set(lineWrapRef.current, { y: "38vh" })
-        .set([tensWrapRef.current, hundredsWrapRef.current], { autoAlpha: 0 })
         .to(".pl-meta", { opacity: 1, duration: 0.8, stagger: 0.12 })
         .fromTo(
           barRef.current,
-          { scaleY: 0, transformOrigin: "bottom center" },
+          { scaleY: 0 },
           { scaleY: 1, duration: 0.9, ease: "expo.inOut" },
           "-=0.5"
         )
@@ -227,46 +206,22 @@ export default function Preloader() {
           {PROFILE.role}
         </p>
 
-        {/* big counter — bottom left, masked for slide in/out */}
-        <div
-          ref={barRef}
-          className="absolute bottom-[8vh] left-0 h-[16vh] w-[2px] bg-gradient-to-b from-transparent via-silver to-silver-dim"
-        />
-        <div className="absolute bottom-[7vh] left-[7vw] overflow-hidden sm:bottom-[8vh] sm:left-[8vw]">
-          <div ref={counterRef} className="flex items-start will-change-transform">
-            <span className="font-clash flex text-[clamp(2.5rem,6.5vw,5rem)] leading-none font-semibold tracking-tight tabular-nums">
-              {/* hundreds reel (only the "1" of 100) */}
-              <div ref={hundredsWrapRef} className="h-[1em] overflow-hidden">
-                <div ref={hundredsRef} className="flex flex-col will-change-transform">
-                  {DIGITS.map((n) => (
-                    <span key={n} className="silver-text flex h-[1em] w-[0.62em] items-center justify-center">
-                      {Math.floor(n / 100)}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              {/* tens reel */}
-              <div ref={tensWrapRef} className="h-[1em] overflow-hidden">
-                <div ref={tensRef} className="flex flex-col will-change-transform">
-                  {DIGITS.map((n) => (
-                    <span key={n} className="silver-text flex h-[1em] w-[0.62em] items-center justify-center">
-                      {Math.floor(n / 10) % 10}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              {/* units reel (always visible) */}
-              <div className="h-[1em] overflow-hidden">
-                <div ref={unitsRef} className="flex flex-col will-change-transform">
-                  {DIGITS.map((n) => (
-                    <span key={n} className="silver-text flex h-[1em] w-[0.62em] items-center justify-center">
-                      {n % 10}
-                    </span>
-                  ))}
-                </div>
-              </div>
+        {/* big counter — bottom left, next to the vertical line */}
+        <div className="absolute bottom-[8vh] left-6 flex items-center gap-3">
+          <div className="h-[2.5rem] sm:h-[4rem] w-[2px] overflow-hidden">
+            <div
+              ref={barRef}
+              className="h-full w-full bg-gradient-to-b from-silver to-silver-dim origin-bottom will-change-transform"
+            />
+          </div>
+          <div ref={counterRef} className="flex items-baseline overflow-hidden leading-none will-change-transform">
+            <span
+              id="preloader-counter-text"
+              className="font-clash text-[clamp(2.5rem,6.5vw,5rem)] leading-none font-semibold tracking-tight tabular-nums silver-text"
+            >
+              0
             </span>
-            <span className="silver-text font-clash mt-[0.5em] text-[clamp(1rem,2.5vw,1.75rem)] leading-none font-semibold">
+            <span className="silver-text font-clash text-[clamp(1.2rem,3vw,2rem)] leading-none font-semibold ml-1">
               %
             </span>
           </div>

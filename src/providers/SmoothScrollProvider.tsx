@@ -16,7 +16,16 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => {
-    const l = new Lenis({ duration: 1.5 });
+    const l = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: "vertical",
+      gestureOrientation: "vertical",
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.5,
+      syncTouch: true,
+    });
     setLenis(l);
 
     const tick = (time: number) => l.raf(time * 1000);

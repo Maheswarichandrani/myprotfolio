@@ -142,7 +142,16 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="font-mono text-[10px] uppercase tracking-[0.25em] text-dim transition-colors duration-300 hover:text-foreground"
             >
-              Teammate — srikardev.tech
+              Teammate1 - Srikar
+            </a>
+            <span className="hidden sm:inline text-dim/30">|</span>
+            <a
+              href="https://ashok-site.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-[10px] uppercase tracking-[0.25em] text-dim transition-colors duration-300 hover:text-foreground"
+            >
+              Teammate2 - Ashok
             </a>
           </div>
           <p className="max-w-[60ch] text-xs leading-relaxed text-dim">
