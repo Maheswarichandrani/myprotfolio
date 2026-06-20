@@ -243,13 +243,13 @@ export default function HeroSection() {
         <div className="hero-fade mt-9 flex flex-wrap justify-center gap-4">
           <a
             href="#projects"
-            className="btn-silver inline-flex items-center justify-center rounded-[6px] px-6 py-3 font-sans text-sm font-semibold transition-transform duration-300 hover:-translate-y-0.5"
+            className="btn-silver inline-flex items-center justify-center rounded-[6px] px-6 py-3 font-sans text-sm font-semibold transition-colors duration-300"
           >
             View Projects
           </a>
           <a
             href="#contact"
-            className="inline-flex items-center justify-center rounded-[6px] border border-line-strong px-6 py-3 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:-translate-y-0.5 hover:bg-white/[0.06]"
+            className="inline-flex items-center justify-center rounded-[6px] border border-line-strong px-6 py-3 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
           >
             Contact Me
           </a>

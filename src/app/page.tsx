@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import ProjectsSection from "@/components/ProjectsSection";
+import SkillsSection from "@/components/SkillsSection";
 import AcademicSection from "@/components/AcademicSection";
 import ContactSection from "@/components/ContactSection";
 import ClosingSection from "@/components/ClosingSection";
@@ -20,6 +21,8 @@ export default function Home() {
         <AboutSection />
 
         <ProjectsSection />
+
+        <SkillsSection />
 
         <AcademicSection />
 

@@ -10,7 +10,7 @@ const LINKS = [
   { label: "Contact", href: "#contact" },
 ];
 
-const CTA = { label: "Hire Me", href: "mailto:chandranimaheswari13@gmail.com" };
+const CTA = { label: "Resume", href: "#" };
 
 /** Monogram mark — doubles as a scroll-to-top button. */
 function Logo() {
