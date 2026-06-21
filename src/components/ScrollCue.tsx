@@ -8,7 +8,7 @@ export default function ScrollCue() {
         <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-silver-dim">
           Scroll
         </span>
-        <div className="relative h-9 w-[1px] overflow-hidden bg-white/10">
+        <div className="relative h-9 w-[1px] overflow-hidden bg-foreground/10">
           <span className="scroll-cue-dot absolute left-1/2 top-0 h-3 w-[1px] -translate-x-1/2 bg-silver" />
         </div>
       </div>

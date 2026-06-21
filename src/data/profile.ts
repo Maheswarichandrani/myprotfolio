@@ -51,7 +51,7 @@ export const PROJECTS: Project[] = [
     tech: ["Next.js", "NestJS", "TypeScript", "TanStack Query", "Better Auth", "PostgreSQL"],
     status: "Currently Building",
     highlight: "Flagship Product",
-    link: "https://creonex.in",
+    link: "https://creonex-beta.vercel.app",
     image: "/creonex.png",
   },
   {

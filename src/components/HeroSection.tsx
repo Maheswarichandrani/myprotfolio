@@ -169,7 +169,6 @@ export default function HeroSection() {
       scale: 1.12,
       rotation: 0,
       zIndex: 50,
-      boxShadow: "0 30px 70px rgba(0,0,0,0.9)",
       duration: 0.4,
       ease: "power2.out",
       overwrite: "auto",
@@ -182,7 +181,6 @@ export default function HeroSection() {
       scale: 1,
       rotation: r,
       zIndex: 10,
-      boxShadow: "0 20px 50px rgba(0,0,0,0.8)",
       duration: 0.4,
       ease: "power2.out",
       overwrite: "auto",
@@ -199,7 +197,7 @@ export default function HeroSection() {
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+            "linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)",
           backgroundSize: "72px 72px",
         }}
       />
@@ -213,7 +211,7 @@ export default function HeroSection() {
             onMouseEnter={onEnter}
             onMouseLeave={onLeave}
             style={{ willChange: "transform, opacity" }}
-            className="photo-card absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-[4/3] w-[6.25rem] cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-[2px] sm:w-40 md:w-48 lg:w-56 xl:w-64"
+            className="photo-card absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-[4/3] w-[6.25rem] cursor-pointer overflow-hidden rounded-2xl border border-line bg-surface/50 p-1.5 backdrop-blur-[2px] sm:w-40 md:w-48 lg:w-56 xl:w-64"
           >
             <img
               src={photo.src}
@@ -223,7 +221,7 @@ export default function HeroSection() {
                 photo.portrait ? "object-contain" : "object-cover"
               }`}
             />
-            <div className="pointer-events-none absolute bottom-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-black/75 px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.15em] text-white backdrop-blur-md sm:text-[9px]">
+            <div className="pointer-events-none absolute bottom-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-line bg-background/75 px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.15em] text-foreground backdrop-blur-md sm:text-[9px]">
               {photo.label}
             </div>
           </div>
@@ -249,7 +247,7 @@ export default function HeroSection() {
           </a>
           <a
             href="#contact"
-            className="inline-flex items-center justify-center rounded-[6px] border border-line-strong px-6 py-3 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
+            className="inline-flex items-center justify-center rounded-[6px] border border-line-strong px-6 py-3 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-foreground/[0.06]"
           >
             Contact Me
           </a>

@@ -87,7 +87,7 @@ export default function AcademicSection() {
           key={p.name}
           className="sticky top-0 flex min-h-screen items-center px-5 sm:px-10 lg:px-14"
         >
-          <article className="acad-card relative grid w-full origin-top gap-8 overflow-hidden rounded-3xl bg-zinc-950 p-6 shadow-[0_40px_100px_-25px_rgba(0,0,0,0.9),0_8px_30px_-10px_rgba(0,0,0,0.7)] ring-1 ring-white/5 will-change-transform sm:p-8 lg:grid-cols-12 lg:gap-12 lg:p-12">
+          <article className="acad-card relative grid w-full origin-top gap-8 overflow-hidden rounded-3xl bg-surface-2 p-6 shadow-[0_40px_100px_-25px_rgba(0,0,0,0.15),0_8px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-[0_40px_100px_-25px_rgba(0,0,0,0.9),0_8px_30px_-10px_rgba(0,0,0,0.7)] ring-1 ring-line will-change-transform sm:p-8 lg:grid-cols-12 lg:gap-12 lg:p-12">
             {/* radial accent */}
             <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(600px_circle_at_20%_20%,rgba(43, 43, 43, 0.06),transparent_60%)]" />
 
@@ -111,7 +111,7 @@ export default function AcademicSection() {
                   return (
                     <span
                       key={t}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white/[0.04] px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-foreground/75"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-line bg-foreground/[0.04] px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-foreground/75"
                     >
                       {Icon && <Icon className="text-silver text-[1.15em]" />}
                       {t}
@@ -123,7 +123,7 @@ export default function AcademicSection() {
 
             {/* center — image */}
             <div className="relative z-10 lg:col-span-6">
-              <div className="acad-img relative aspect-[16/10] overflow-hidden rounded-2xl ring-1 ring-white/10">
+              <div className="acad-img relative aspect-[16/10] overflow-hidden rounded-2xl ring-1 ring-line">
                 <img
                   src={p.image}
                   alt={p.name}
@@ -136,7 +136,7 @@ export default function AcademicSection() {
 
             {/* right — achievement + github */}
             <div className="relative z-10 flex flex-col justify-center gap-6 lg:col-span-3">
-              <div className="acad-anim flex items-start gap-3 rounded-2xl border border-line bg-white/[0.03] p-4">
+              <div className="acad-anim flex items-start gap-3 rounded-2xl border border-line bg-foreground/[0.03] p-4">
                 <LuTrophy className="mt-0.5 shrink-0 text-lg text-silver" />
                 <div>
                   <p className="text-sm font-medium text-foreground">
@@ -153,7 +153,7 @@ export default function AcademicSection() {
                   href={p.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="acad-anim inline-flex items-center justify-center gap-2 rounded-[6px] border border-line-strong px-5 py-2.5 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
+                  className="acad-anim inline-flex items-center justify-center gap-2 rounded-[6px] border border-line-strong px-5 py-2.5 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-foreground/[0.06]"
                 >
                   View GitHub <span aria-hidden>↗</span>
                 </a>
@@ -163,7 +163,7 @@ export default function AcademicSection() {
                   href={p.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="acad-anim inline-flex items-center justify-center gap-2 rounded-[6px] border border-line-strong px-5 py-2.5 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
+                  className="acad-anim inline-flex items-center justify-center gap-2 rounded-[6px] border border-line-strong px-5 py-2.5 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-foreground/[0.06]"
                 >
                   View Live <span aria-hidden>↗</span>
                 </a>

@@ -73,7 +73,7 @@ export default function Footer() {
       {/* giant cropped background word */}
       <span
         ref={wordRef}
-        className="font-clash pointer-events-none absolute bottom-0 left-0 w-full text-center text-[15vw] leading-none font-semibold tracking-tight whitespace-nowrap text-white/5 uppercase select-none will-change-transform"
+        className="font-clash pointer-events-none absolute bottom-0 left-0 w-full text-center text-[15vw] leading-none font-semibold tracking-tight whitespace-nowrap text-foreground/8 uppercase select-none will-change-transform"
       >
         Maheswari
       </span>

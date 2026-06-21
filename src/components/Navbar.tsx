@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HiBars3, HiXMark } from "react-icons/hi2";
+import { LuSun, LuMoon } from "react-icons/lu";
+import { useTheme } from "next-themes";
 
 const LINKS = [
   { label: "About", href: "#about" },
@@ -21,10 +23,39 @@ function Logo() {
     <a
       href="#top"
       aria-label="Home"
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.08] font-clash text-sm font-semibold text-foreground transition-colors hover:bg-white/[0.14]"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-surface-2/40 font-clash text-sm font-semibold text-foreground transition-colors hover:bg-surface-2/80"
     >
       CM
     </a>
+  );
+}
+
+/** Theme toggle with Sun/Moon icons, avoiding hydration mismatch. */
+function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="h-9 w-9 rounded-full border border-line bg-surface-2/40 animate-pulse" />
+    );
+  }
+
+  const isDark = resolvedTheme === "dark";
+
+  return (
+    <button
+      type="button"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      aria-label="Toggle theme"
+      className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-surface-2/40 text-foreground transition-all duration-300 hover:bg-surface-2/80 active:scale-95 cursor-pointer"
+    >
+      {isDark ? <LuSun size={16} /> : <LuMoon size={16} />}
+    </button>
   );
 }
 
@@ -35,7 +66,7 @@ export default function Navbar() {
     <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4 sm:top-6">
       <nav className="relative w-full max-w-3xl">
         {/* Pill */}
-        <div className="flex items-center justify-between gap-2 rounded-full border border-white/10 bg-black/40 px-2 py-2 shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+        <div className="flex items-center justify-between gap-2 rounded-full border border-line bg-background/40 px-2 py-2 shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl">
           <Logo />
 
           {/* Desktop links */}
@@ -44,7 +75,7 @@ export default function Navbar() {
               <li key={l.label}>
                 <a
                   href={l.href}
-                  className="rounded-full px-4 py-2 text-sm text-silver-dim transition-colors hover:bg-white/[0.06] hover:text-foreground"
+                  className="rounded-full px-4 py-2 text-sm text-silver-dim transition-colors hover:bg-surface-2/40 hover:text-foreground"
                 >
                   {l.label}
                 </a>
@@ -52,53 +83,59 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* Desktop CTA */}
-          <a
-            href={CTA.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden rounded-[6px] bg-[#ece7dd] px-5 py-2 font-sans text-xs font-semibold text-black transition-colors hover:bg-white md:inline-flex"
-          >
-            {CTA.label}
-          </a>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
 
-          {/* Mobile toggle */}
-          <button
-            type="button"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-white/[0.06] md:hidden"
-          >
-            {open ? <HiXMark size={20} /> : <HiBars3 size={20} />}
-          </button>
+            {/* Desktop CTA */}
+            <a
+              href={CTA.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden rounded-[6px] bg-silver px-5 py-2 font-sans text-xs font-semibold text-background transition-colors hover:bg-foreground md:inline-flex"
+            >
+              {CTA.label}
+            </a>
+
+            {/* Mobile toggle */}
+            <button
+              type="button"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-surface-2/40 md:hidden"
+            >
+              {open ? <HiXMark size={20} /> : <HiBars3 size={20} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile menu */}
         {open && (
-          <div className="absolute inset-x-0 top-[calc(100%+0.5rem)] origin-top rounded-3xl border border-white/10 bg-black/70 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl md:hidden">
+          <div className="absolute inset-x-0 top-[calc(100%+0.5rem)] origin-top rounded-3xl border border-line bg-background/70 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl md:hidden">
             <ul className="flex flex-col">
               {LINKS.map((l) => (
                 <li key={l.label}>
                   <a
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    className="block rounded-2xl px-4 py-3 text-sm text-silver-dim transition-colors hover:bg-white/[0.06] hover:text-foreground"
+                    className="block rounded-2xl px-4 py-3 text-sm text-silver-dim transition-colors hover:bg-surface-2/40 hover:text-foreground"
                   >
                     {l.label}
                   </a>
                 </li>
               ))}
             </ul>
-            <a
-              href={CTA.href}
-              onClick={() => setOpen(false)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 block rounded-[6px] bg-[#ece7dd] px-4 py-3 text-center font-sans text-xs font-semibold text-black transition-colors hover:bg-white"
-            >
-              {CTA.label}
-            </a>
+            <div className="mt-1 flex flex-col gap-2 p-2">
+              <a
+                href={CTA.href}
+                onClick={() => setOpen(false)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-[6px] bg-silver px-4 py-3 text-center font-sans text-xs font-semibold text-background transition-colors hover:bg-foreground"
+              >
+                {CTA.label}
+              </a>
+            </div>
           </div>
         )}
       </nav>

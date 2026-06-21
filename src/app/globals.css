@@ -1,9 +1,35 @@
 @import "tailwindcss";
 
+/* Define the custom dark variant for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Satoshi + Clash Display load via <link> tags in layout.tsx
    (Fontshare CDN — @import here gets reordered after Tailwind's rules and ignored) */
 
 :root {
+  /* Base — white */
+  --background: #ffffff;
+  --surface: #f5f5f7;
+  --surface-2: #e8e8ed;
+
+  /* Shimmer silver / charcoal */
+  --silver: #1d1d1f;
+  --silver-dim: #86868b;
+
+  /* Text */
+  --foreground: #000000;
+  --text-dim: #515154;
+
+  /* Lines / borders */
+  --line: rgba(0, 0, 0, 0.08);
+  --line-strong: rgba(0, 0, 0, 0.16);
+  --grid-line: rgba(0, 0, 0, 0.04);
+  --spotlight-color: rgba(0, 0, 0, 0.03);
+}
+
+:root[class~="dark"],
+html.dark,
+.dark {
   /* Base — black */
   --background: #000000;
   --surface: #0f0f0f;
@@ -20,6 +46,8 @@
   /* Lines / borders */
   --line: rgba(255, 255, 255, 0.1);
   --line-strong: rgba(255, 255, 255, 0.22);
+  --grid-line: rgba(255, 255, 255, 0.05);
+  --spotlight-color: rgba(255, 255, 255, 0.08);
 }
 
 @theme inline {
@@ -32,6 +60,7 @@
   --color-dim: var(--text-dim);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
+  --color-grid-line: var(--grid-line);
 
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: "Satoshi", var(--font-inter), sans-serif;
@@ -86,7 +115,7 @@ body.locked {
 /* ---------- Selection ---------- */
 ::selection {
   background: var(--silver);
-  color: #000;
+  color: var(--background);
 }
 
 /* ---------- Scrollbar ---------- */
@@ -95,14 +124,14 @@ body.locked {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #000;
+  background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  background: var(--surface-2);
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3a3a;
+  background: var(--line-strong);
 }
 
 /* ---------- Hide native cursor on desktop ----------
@@ -114,7 +143,7 @@ body.locked {
 
 /* ---------- Reusable utilities ---------- */
 .silver-text {
-  background: linear-gradient(180deg, #f5f5f5 0%, #c0c0c0 60%, #6e6e6e 100%);
+  background: linear-gradient(180deg, var(--foreground) 0%, var(--silver) 60%, var(--silver-dim) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -122,8 +151,8 @@ body.locked {
 
 .metallic-border {
   position: relative;
-  background: linear-gradient(180deg, #0d0d0d, #050505);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line);
 }
 .metallic-border::before {
   content: "";
@@ -133,10 +162,10 @@ body.locked {
   padding: 1px;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.25),
-    rgba(255, 255, 255, 0) 35%,
-    rgba(255, 255, 255, 0) 65%,
-    rgba(255, 255, 255, 0.18)
+    var(--line-strong),
+    transparent 35%,
+    transparent 65%,
+    var(--line)
   );
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
@@ -189,16 +218,16 @@ body.locked {
 .spotlight-bg {
   background: radial-gradient(
       600px circle at var(--mx, 50%) var(--my, 40%),
-      rgba(255, 255, 255, 0.08),
+      var(--spotlight-color),
       transparent 60%
     ),
-    #000;
+    var(--background);
 }
 
 /* ---------- Loader silver line ---------- */
 .loader-line {
   height: 1px;
-  background: linear-gradient(90deg, transparent, #c0c0c0 50%, transparent);
+  background: linear-gradient(90deg, transparent, var(--silver) 50%, transparent);
   width: 100%;
 }
 
@@ -210,7 +239,7 @@ button:focus {
 }
 input:focus,
 textarea:focus {
-  border-bottom-color: #f5f5f5 !important;
+  border-bottom-color: var(--foreground) !important;
 }
 
 @layer utilities {
@@ -221,10 +250,10 @@ textarea:focus {
 
 /* ---------- Solid silver button ---------- */
 .btn-silver {
-  background-color: #ece7dd;
-  color: #000;
+  background-color: var(--silver);
+  color: var(--background);
   transition: background-color 0.3s ease;
 }
 .btn-silver:hover {
-  background-color: #ffffff;
+  background-color: var(--foreground);
 }

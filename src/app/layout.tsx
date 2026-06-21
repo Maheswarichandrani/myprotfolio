@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/providers/SmoothScrollProvider";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 import Preloader from "@/components/Preloader";
 import { PROFILE } from "@/data/profile";
 
@@ -64,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link
@@ -78,7 +79,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <Preloader />
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

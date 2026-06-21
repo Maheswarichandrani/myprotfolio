@@ -135,7 +135,7 @@ export default function AboutSection() {
                     className="absolute inset-0 h-full w-full object-cover"
                   />
                 )}
-                <span className="font-clash absolute right-6 bottom-4 text-[clamp(4rem,12vw,9rem)] leading-none font-medium text-white/[0.06] select-none">
+                <span className="font-clash absolute right-6 bottom-4 text-[clamp(4rem,12vw,9rem)] leading-none font-medium text-foreground/5 select-none">
                   0{i + 1}
                 </span>
               </div>
@@ -191,13 +191,13 @@ export default function AboutSection() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="mt-5 inline-flex items-center gap-2 rounded-[6px] border border-line-strong px-4 py-2.5 font-sans text-xs font-medium text-foreground transition-colors duration-300 hover:bg-white/[0.06]"
+                      className="mt-5 inline-flex items-center gap-2 rounded-[6px] border border-line-strong px-4 py-2.5 font-sans text-xs font-medium text-foreground transition-colors duration-300 hover:bg-foreground/[0.06]"
                     >
                       View Live — {slide.link.label}
                       <span aria-hidden>↗</span>
                     </a>
                   )}
-                  <div className="mt-5 flex max-w-[52ch] flex-wrap gap-2 rounded-xl border border-line bg-white/[0.03] p-4">
+                  <div className="mt-5 flex max-w-[52ch] flex-wrap gap-2 rounded-xl border border-line bg-foreground/[0.03] p-4">
                     {slide.tags.map((tag, ti) => (
                       <span
                         key={tag}
@@ -205,7 +205,7 @@ export default function AboutSection() {
                       >
                         {tag}
                         {ti < slide.tags.length - 1 && (
-                          <span className="ml-2 text-white/15">·</span>
+                          <span className="ml-2 text-foreground/15">·</span>
                         )}
                       </span>
                     ))}

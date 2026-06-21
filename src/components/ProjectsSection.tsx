@@ -152,7 +152,7 @@ export default function ProjectsSection() {
         </p>
         <h2 className="proj-intro font-clash mt-8 max-w-[24ch] text-[clamp(2rem,5vw,4.5rem)] leading-[1.05] font-medium">
           {HEADLINE.map((part, i) => (
-            <span key={i} className={part.dim ? "text-white/30" : "text-foreground"}>
+            <span key={i} className={part.dim ? "text-foreground/30" : "text-foreground"}>
               {part.text}
             </span>
           ))}
@@ -180,18 +180,18 @@ export default function ProjectsSection() {
 
               {/* copy */}
               <div className="relative flex min-h-0 flex-1 flex-col lg:order-1 lg:w-[42%] lg:max-w-xl lg:flex-none lg:justify-center">
-                <span className="proj-num font-clash pointer-events-none hidden leading-[0.8] font-semibold text-white/[0.07] select-none [font-size:clamp(5rem,13vw,10rem)] lg:block">
+                <span className="proj-num font-clash pointer-events-none hidden leading-[0.8] font-semibold text-foreground/7 select-none [font-size:clamp(5rem,13vw,10rem)] lg:block">
                   0{i + 1}
                 </span>
 
                 <div className="lg:-mt-10">
                   <div className="proj-copy flex flex-wrap items-center gap-x-3 gap-y-2">
                     <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-silver lg:text-[10px] lg:tracking-[0.3em]">
-                      <span className="text-white/30 lg:hidden">0{i + 1} — </span>
+                      <span className="text-foreground/30 lg:hidden">0{i + 1} — </span>
                       {project.category}
                     </span>
                     {project.highlight && (
-                      <span className="rounded-full border border-line bg-white/[0.04] px-3 py-1 font-mono text-[9px] uppercase tracking-[0.2em] text-silver">
+                      <span className="rounded-full border border-line bg-foreground/[0.04] px-3 py-1 font-mono text-[9px] uppercase tracking-[0.2em] text-silver">
                         ✦ {project.highlight}
                       </span>
                     )}
@@ -213,7 +213,7 @@ export default function ProjectsSection() {
                     <ul className="proj-copy mt-4 hidden grid-cols-2 gap-x-6 gap-y-1.5 lg:grid">
                       {project.contributions.map((c) => (
                         <li key={c} className="text-xs leading-relaxed text-dim">
-                          <span className="mr-2 text-white/25">—</span>
+                          <span className="mr-2 text-foreground/25">—</span>
                           {c}
                         </li>
                       ))}
@@ -226,7 +226,7 @@ export default function ProjectsSection() {
                       return (
                         <span
                           key={t}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white/[0.04] px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-foreground/75 lg:border-line-strong lg:bg-white/[0.05] lg:px-3.5 lg:py-1.5 lg:text-[10px] lg:tracking-[0.12em] lg:text-foreground/85"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-foreground/[0.04] px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-foreground/75 lg:border-line-strong lg:bg-foreground/[0.05] lg:px-3.5 lg:py-1.5 lg:text-[10px] lg:tracking-[0.12em] lg:text-foreground/85"
                         >
                           {Icon && <Icon className="text-silver text-[1.15em]" />}
                           {t}
@@ -263,7 +263,7 @@ export default function ProjectsSection() {
 
         {/* progress line */}
         <div className="absolute bottom-8 left-1/2 z-10 w-[40vw] max-w-md -translate-x-1/2">
-          <div className="h-px w-full bg-white/10">
+          <div className="h-px w-full bg-foreground/10">
             <div
               ref={progressRef}
               className="h-px w-full origin-left scale-x-0 bg-gradient-to-r from-silver-dim to-silver"
