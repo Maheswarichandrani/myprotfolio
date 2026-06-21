@@ -13,23 +13,28 @@ gsap.registerPlugin(ScrollTrigger);
 const SKILLS_DATA = [
   {
     category: "Languages",
-    description: "Core languages used to develop robust and efficient algorithms.",
-    skills: ["Java", "JavaScript", "TypeScript"],
+    description: "Core programming languages used to write robust, efficient logic.",
+    skills: ["Java", "JavaScript", "TypeScript", "Python"],
   },
   {
     category: "Frontend",
-    description: "Frameworks and libraries for building beautiful, responsive user interfaces.",
-    skills: ["Next.js", "React", "Tailwind CSS"],
+    description: "Frameworks and libraries for building interactive, beautiful, and responsive interfaces.",
+    skills: ["Next.js", "React", "React Native", "Redux", "Tailwind CSS"],
   },
   {
     category: "Backend",
-    description: "Server-side technologies, microservices, and API development.",
+    description: "Server-side technologies, API design, and backend logic.",
     skills: ["Node.js", "Express.js", "Spring Boot"],
   },
   {
     category: "Databases",
-    description: "Relational and document databases for secure, high-performance data storage.",
-    skills: ["PostgreSQL", "MongoDB"],
+    description: "Relational and NoSQL storage systems designed for scalability and speed.",
+    skills: ["PostgreSQL", "MongoDB", "Redis"],
+  },
+  {
+    category: "Tools & DevOps",
+    description: "Essential development utilities, version control, and cloud platforms.",
+    skills: ["Git", "GitHub", "Vercel", "VS Code", "Postman", "Docker"],
   },
 ];
 

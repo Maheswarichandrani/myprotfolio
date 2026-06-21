@@ -10,7 +10,10 @@ const LINKS = [
   { label: "Contact", href: "#contact" },
 ];
 
-const CTA = { label: "Resume", href: "#" };
+const CTA = {
+  label: "Resume",
+  href: "https://drive.google.com/file/d/10Hk_oyprPmj1jz1Oxei6lMIVevbU7Ol4/view?usp=drive_link",
+};
 
 /** Monogram mark — doubles as a scroll-to-top button. */
 function Logo() {
@@ -52,6 +55,8 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <a
             href={CTA.href}
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden rounded-[6px] bg-[#ece7dd] px-5 py-2 font-sans text-xs font-semibold text-black transition-colors hover:bg-white md:inline-flex"
           >
             {CTA.label}
@@ -88,6 +93,8 @@ export default function Navbar() {
             <a
               href={CTA.href}
               onClick={() => setOpen(false)}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-1 block rounded-[6px] bg-[#ece7dd] px-4 py-3 text-center font-sans text-xs font-semibold text-black transition-colors hover:bg-white"
             >
               {CTA.label}

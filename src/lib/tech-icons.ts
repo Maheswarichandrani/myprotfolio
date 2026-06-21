@@ -18,10 +18,16 @@ import {
   SiNodedotjs,
   SiPython,
   SiSanity,
+  SiGit,
+  SiGithub,
+  SiVercel,
+  SiPostman,
+  SiDocker,
 } from "react-icons/si";
 import { FaJava } from "react-icons/fa";
 import { TbBrandReactNative } from "react-icons/tb";
 import { LuBrain } from "react-icons/lu";
+import { VscVscode } from "react-icons/vsc";
 
 /** brand glyphs for tech-stack labels; render as currentColor (monochrome) */
 export const TECH_ICONS: Record<string, IconType> = {
@@ -46,4 +52,10 @@ export const TECH_ICONS: Record<string, IconType> = {
   Java: FaJava,
   "React Native": TbBrandReactNative,
   "AI/ML": LuBrain,
+  Git: SiGit,
+  GitHub: SiGithub,
+  Vercel: SiVercel,
+  "VS Code": VscVscode,
+  Postman: SiPostman,
+  Docker: SiDocker,
 };

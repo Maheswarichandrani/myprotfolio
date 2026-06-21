@@ -53,10 +53,9 @@ export default function AcademicSection() {
           gsap.to(card, {
             scale: 0.92,
             autoAlpha: 0.4,
-            filter: "blur(3px)",
             ease: "none",
             scrollTrigger: {
-              trigger: cards[i + 1],
+              trigger: cards[i + 1].parentElement,
               start: "top bottom",
               end: "top top",
               scrub: true,
