@@ -5,7 +5,6 @@ import ProjectsSection from "@/components/ProjectsSection";
 import SkillsSection from "@/components/SkillsSection";
 import AcademicSection from "@/components/AcademicSection";
 import ContactSection from "@/components/ContactSection";
-import ClosingSection from "@/components/ClosingSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -27,8 +26,6 @@ export default function Home() {
         <AcademicSection />
 
         <ContactSection />
-
-        <ClosingSection />
       </main>
 
       {/* transparent runway — height synced to the footer by Footer itself */}

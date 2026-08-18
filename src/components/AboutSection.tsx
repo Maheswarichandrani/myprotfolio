@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import { useLenis } from "@/providers/SmoothScrollProvider";
 import { ABOUT_SLIDES } from "@/data/profile";
 import { LUXE } from "@/lib/ease";
+import CustomButton from "@/components/CustomButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,15 +34,14 @@ export default function AboutSection() {
       const items = gsap.utils.toArray<HTMLElement>(".about-item");
 
       gsap.set(slides.slice(1), { autoAlpha: 0, scale: 1.05 });
-      gsap.set(items.slice(1), { opacity: 0.25, filter: "blur(2px)" });
+      gsap.set(items.slice(1), { opacity: 0.3 });
 
       const setActive = (next: number) => {
         const prev = activeRef.current;
         if (next === prev) return;
         activeRef.current = next;
 
-        // incoming on top, wiping in from top-left to bottom-right;
-        // outgoing stays opaque beneath until covered (no background flash)
+        // incoming image stack wiping in
         gsap.killTweensOf([slides[prev], slides[next]]);
         slides.forEach((s, i) =>
           gsap.set(s, { zIndex: i === next ? 2 : i === prev ? 1 : 0 })
@@ -60,30 +60,26 @@ export default function AboutSection() {
         );
         gsap.to(slides[next], { autoAlpha: 1, duration: 0.35, ease: "power1.out" });
 
-        // slide the list so the active block sits at the top of the clip window
+        // Translate text list vertically as user scrolls
         gsap.to(listRef.current, {
           y: -items[next].offsetTop,
           duration: 1.1,
           ease: LUXE,
           overwrite: "auto",
         });
+
         items.forEach((el, i) => {
           if (i === next) {
-            gsap.fromTo(
-              el,
-              { opacity: 0.25, filter: "blur(8px)" },
-              { opacity: 1, filter: "blur(0px)", duration: 1.1, ease: LUXE, overwrite: "auto" }
-            );
+            gsap.to(el, { opacity: 1, duration: 0.9, ease: LUXE, overwrite: "auto" });
             gsap.fromTo(
               el.children,
-              { y: 16 },
-              { y: 0, stagger: 0.06, duration: 1.0, ease: LUXE, overwrite: "auto" }
+              { y: 14 },
+              { y: 0, stagger: 0.05, duration: 1.0, ease: LUXE, overwrite: "auto" }
             );
           } else {
             gsap.to(el, {
-              opacity: 0.25,
-              filter: "blur(2px)",
-              duration: 0.9,
+              opacity: 0.3,
+              duration: 0.8,
               ease: LUXE,
               overwrite: "auto",
             });
@@ -103,7 +99,13 @@ export default function AboutSection() {
         start: "top top",
         end: "bottom bottom",
         onUpdate: (self) => {
-          setActive(Math.min(COUNT - 1, Math.floor(self.progress * COUNT)));
+          const p = self.progress;
+          let idx = 0;
+          if (p < 0.22) idx = 0;
+          else if (p < 0.45) idx = 1;
+          else if (p < 0.68) idx = 2;
+          else idx = 3;
+          setActive(idx);
         },
       });
     },
@@ -118,8 +120,8 @@ export default function AboutSection() {
   };
 
   return (
-    <section ref={sectionRef} id="about" className="relative h-[400vh] bg-background">
-      <div className="sticky top-0 flex h-screen flex-col gap-6 overflow-hidden p-5 sm:p-8 lg:flex-row lg:gap-12 lg:p-12">
+    <section ref={sectionRef} id="about" className="relative h-[480vh] bg-background mt-24 lg:mt-36">
+      <div className="sticky top-0 flex h-screen flex-col gap-6 overflow-hidden section-container py-8 sm:py-12 lg:flex-row lg:gap-12 lg:py-12">
         {/* image stack */}
         <div className="relative h-[34vh] overflow-hidden rounded-3xl border border-line lg:h-auto lg:w-[58%]">
           {ABOUT_SLIDES.map((slide, i) => (
@@ -145,7 +147,7 @@ export default function AboutSection() {
 
         {/* content panel */}
         <div className="flex min-h-0 flex-1 flex-col lg:py-4">
-          <div className="flex items-end justify-between">
+          <div className="flex items-end justify-between border-b border-line pb-4">
             <h2 className="font-clash text-[clamp(1.5rem,3vw,2.5rem)] leading-none font-medium text-foreground">
               About Me
             </h2>
@@ -159,53 +161,52 @@ export default function AboutSection() {
                   ))}
                 </div>
               </div>
-              <span className="font-mono text-[10px] tracking-[0.2em] text-dim">
+              <span className="font-mono text-[10px] tracking-[0.2em] text-silver-dim">
                 / 0{COUNT}
               </span>
             </div>
           </div>
 
-          <div className="mt-5 border-t border-line" />
-
-          {/* clip window — list translates inside it */}
-          <div className="relative mt-8 min-h-0 flex-1 overflow-hidden">
-            <div ref={listRef} className="flex flex-col gap-12 will-change-transform">
+          {/* clip window — list translates vertically as user scrolls */}
+          <div className="relative mt-6 min-h-0 flex-1 overflow-hidden">
+            <div ref={listRef} className="flex flex-col gap-16 will-change-transform pb-24">
               {ABOUT_SLIDES.map((slide, i) => (
                 <div
                   key={i}
                   onClick={() => scrollToSlide(i)}
-                  className="about-item cursor-pointer"
+                  className="about-item cursor-pointer space-y-3 pb-8"
                 >
-                  <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-silver">
-                    {slide.label}
+                  <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-silver font-medium">
+                    0{i + 1} — {slide.label}
                   </span>
-                  <h3 className="font-clash mt-3 max-w-[20ch] text-[clamp(1.4rem,2.6vw,2.25rem)] leading-[1.12] font-medium text-foreground">
+                  <h3 className="font-clash text-[clamp(1.4rem,2.6vw,2.25rem)] leading-[1.12] font-medium text-foreground">
                     {slide.title}
                   </h3>
-                  <p className="mt-4 max-w-[52ch] text-sm leading-relaxed text-dim lg:text-base">
+                  <p className="max-w-[52ch] text-sm leading-relaxed text-dim lg:text-base font-normal">
                     {slide.body}
                   </p>
                   {slide.link && (
-                    <a
-                      href={slide.link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="mt-5 inline-flex items-center gap-2 rounded-[6px] border border-line-strong px-4 py-2.5 font-sans text-xs font-medium text-foreground transition-colors duration-300 hover:bg-foreground/[0.06]"
-                    >
-                      View Live — {slide.link.label}
-                      <span aria-hidden>↗</span>
-                    </a>
+                    <div className="pt-2">
+                      <CustomButton
+                        href={slide.link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        isFlowing
+                        className="text-xs"
+                      >
+                        View Live — {slide.link.label} ↗
+                      </CustomButton>
+                    </div>
                   )}
-                  <div className="mt-5 flex max-w-[52ch] flex-wrap gap-2 rounded-xl border border-line bg-foreground/[0.03] p-4">
+                  <div className="flex max-w-[52ch] flex-wrap gap-2 rounded-xl border border-line bg-surface-2/60 p-3.5">
                     {slide.tags.map((tag, ti) => (
                       <span
                         key={tag}
-                        className="font-mono text-[10px] uppercase tracking-wider text-dim"
+                        className="font-mono text-[10px] uppercase tracking-wider text-dim font-medium"
                       >
                         {tag}
                         {ti < slide.tags.length - 1 && (
-                          <span className="ml-2 text-foreground/15">·</span>
+                          <span className="ml-2 text-foreground/20">·</span>
                         )}
                       </span>
                     ))}
@@ -215,7 +216,7 @@ export default function AboutSection() {
             </div>
 
             {/* soft fade at the bottom of the clip window */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent" />
           </div>
         </div>
       </div>

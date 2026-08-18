@@ -4,8 +4,10 @@ import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import emailjs from "@emailjs/browser";
 import { LUXE } from "@/lib/ease";
 import { SOCIAL_LINKS } from "@/data/profile";
+import CustomButton from "@/components/CustomButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,6 +18,7 @@ const fieldClass =
 
 export default function ContactSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -37,24 +40,44 @@ export default function ContactSection() {
     e.preventDefault();
     if (status === "sending") return;
 
-    const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form));
+    const form = formRef.current;
+    if (!form) return;
+
+    const formData = new FormData(form);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const message = formData.get("message") as string;
+
+    if (!name?.trim() || !email?.trim() || !message?.trim()) {
+      setStatus("error");
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "";
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "";
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "";
+
+    if (!serviceId || !templateId || !publicKey) {
+      setStatus("error");
+      setError("EmailJS keys missing in .env file. Please set NEXT_PUBLIC_EMAILJS_* keys.");
+      return;
+    }
 
     setStatus("sending");
     setError("");
+
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.error || "Failed to send message.");
+      await emailjs.sendForm(serviceId, templateId, form, publicKey);
       setStatus("sent");
       form.reset();
-    } catch (err) {
+    } catch (err: unknown) {
       setStatus("error");
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(
+        err && typeof err === "object" && "text" in err
+          ? (err as { text: string }).text
+          : "Failed to send message via EmailJS."
+      );
     }
   }
 
@@ -62,23 +85,23 @@ export default function ContactSection() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative overflow-hidden bg-background px-6 py-28 sm:px-10 lg:px-14 lg:py-40"
+      className="relative overflow-hidden bg-background section-padding"
     >
       {/* soft top glow */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-line-strong to-transparent" />
 
-      <div className="mx-auto grid max-w-5xl gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+      <div className="section-container grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
         {/* Left — intro + socials */}
         <div className="flex flex-col">
-          <p className="ct-reveal font-mono text-[11px] uppercase tracking-[0.3em] text-silver-dim">
-            Contact
+          <p className="ct-reveal font-mono text-[11px] uppercase tracking-[0.35em] text-silver-dim">
+            Get In Touch
           </p>
-          <h2 className="ct-reveal silver-text font-clash mt-5 text-[clamp(2rem,5vw,3.5rem)] font-semibold leading-[1.05] tracking-tight">
-            Let&apos;s build something
+          <h2 className="ct-reveal silver-text font-clash mt-3 text-[clamp(1.85rem,4vw,3.5rem)] font-medium leading-[1.1] tracking-tight">
+            Let&apos;s build something exceptional
           </h2>
           <p className="ct-reveal mt-5 max-w-md text-sm leading-relaxed text-dim lg:text-base">
-            Have a role, a project, or an idea worth chasing? Drop a message —
-            I read every one and reply fast.
+            Have a role, a high-impact project, or an innovative idea worth chasing? Drop a message —
+            I read every submission and respond swiftly.
           </p>
 
           <div className="ct-reveal mt-10 flex flex-wrap gap-x-6 gap-y-3">
@@ -96,8 +119,8 @@ export default function ContactSection() {
           </div>
         </div>
 
-        {/* Right — form */}
-        <form onSubmit={onSubmit} noValidate className="ct-reveal flex flex-col gap-4">
+        {/* Right — EmailJS Contact Form */}
+        <form ref={formRef} onSubmit={onSubmit} noValidate className="ct-reveal flex flex-col gap-5">
           {/* honeypot — hidden from humans */}
           <input
             type="text"
@@ -108,7 +131,7 @@ export default function ContactSection() {
             className="hidden"
           />
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             <label className="flex flex-col gap-2">
               <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-silver-dim">
                 Name
@@ -151,19 +174,19 @@ export default function ContactSection() {
             />
           </label>
 
-          <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <button
+          <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <CustomButton
               type="submit"
               disabled={status === "sending"}
-              className="btn-silver inline-flex items-center justify-center rounded-[6px] px-7 py-3 font-sans text-sm font-semibold transition-transform duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+              isFlowing
             >
               {status === "sending" ? "Sending…" : "Send Message"}
-            </button>
+            </CustomButton>
 
             <p
               aria-live="polite"
               className={`font-mono text-[11px] uppercase tracking-[0.15em] ${
-                status === "error" ? "text-red-400" : "text-silver-dim"
+                status === "error" ? "text-red-400" : "text-silver"
               }`}
             >
               {status === "sent" && "Message sent — talk soon."}

@@ -36,18 +36,10 @@ export type Project = {
 export const PROJECTS: Project[] = [
   {
     title: "Creonex",
-    category: "Creator Economy Platform",
+    category: "CREATOR ECONOMY PLATFORM",
     description:
-      "A platform connecting creators and learners through mentorship, sessions, digital products, and meaningful interactions.",
+      "Monetization ecosystem empowering creators through 1:1 mentorship, sessions, digital products, and community interactions.",
     role: "Frontend Engineer & Product Builder",
-    contributions: [
-      "Production-grade frontend architecture",
-      "Authentication flows",
-      "TanStack Query integration",
-      "Dashboard experiences",
-      "Creator onboarding",
-      "Responsive UI systems",
-    ],
     tech: ["Next.js", "NestJS", "TypeScript", "TanStack Query", "Better Auth", "PostgreSQL"],
     status: "Currently Building",
     highlight: "Flagship Product",
@@ -56,9 +48,9 @@ export const PROJECTS: Project[] = [
   },
   {
     title: "Nala Armoire",
-    category: "Fashion E-Commerce",
+    category: "FASHION E-COMMERCE",
     description:
-      "A modern e-commerce platform built for fashion retail with a focus on user experience and performance.",
+      "Modern e-commerce platform built for fashion retail focusing on speed, responsive design, and smooth user flow.",
     role: "Full Stack Developer",
     tech: ["Next.js", "TypeScript", "Tailwind CSS"],
     status: "Live",
@@ -67,9 +59,9 @@ export const PROJECTS: Project[] = [
   },
   {
     title: "TreeKart",
-    category: "Agri Commerce — Mangoes & Tree Rentals",
+    category: "AGRI COMMERCE PLATFORM",
     description:
-      "An e-commerce platform for a mango and tree-rental business — customers buy farm-fresh mangoes online or rent mango trees and receive the harvest each season.",
+      "E-commerce & rental platform enabling customers to order farm-fresh mangoes online or rent trees for seasonal harvest.",
     role: "Full Stack Developer",
     tech: ["Next.js", "TypeScript", "Tailwind CSS"],
     status: "Live",
@@ -80,42 +72,58 @@ export const PROJECTS: Project[] = [
 
 export type AcademicProject = {
   name: string;
+  category: string;
   tagline: string;
   description: string;
   achievement: string;
+  isWinner?: boolean;
+  bgGradient: string;
   tech: string[];
   github?: string;
   link?: string;
   image: string;
+  keyMetric?: string;
 };
 
 export const ACADEMIC_PROJECTS: AcademicProject[] = [
   {
-    name: "DeepNox",
-    tagline: "AI Deepfake Detection",
-    description:
-      "AI-powered deepfake detection browser extension that analyzes images, videos, and audio across social media platforms in real time.",
-    achievement: "Hackathon Top 5 Winner",
-    tech: ["React", "TypeScript", "Node.js", "Python"],
-    github: "https://github.com/Srikar132/deep-nox.git",
-    image: "/deepnox.png",
-  },
-  {
     name: "HealVerse",
+    category: "AI + Healthcare Ecosystem",
     tagline: "AI Healthcare Ecosystem",
     description:
-      "AI-driven healthcare platform connecting patients and care through intelligent diagnostics, built with a mobile-first cross-platform stack.",
-    achievement: "Hackathon 1st Prize Winner",
+      "AI-driven healthcare platform automating patient triage and clinical diagnostics with a mobile-first stack.",
+    achievement: "1st Prize Winner · Vedic Vision Hackathon",
+    isWinner: true,
+    bgGradient: "from-[#1e2022] via-[#161718] to-[#131314]",
+    keyMetric: "Cross-Platform Diagnostics",
     tech: ["React Native", "Spring Boot", "Java", "AI/ML"],
     github: "https://github.com/Ashok-Dd/healverse.git",
     image: "/healverse.png",
   },
   {
-    name: "InfraInk",
-    tagline: "Developer Blogging Platform",
+    name: "DeepNox",
+    category: "AI + Media Security",
+    tagline: "AI Deepfake Detection System",
     description:
-      "A modern developer-focused blogging platform that enables writers to publish tech articles, and readers to bookmark, search, and engage with content in real time.",
-    achievement: "Full Stack Platform",
+      "AI-powered deepfake detection extension analyzing synthetic media across social platforms in real time.",
+    achievement: "5th Prize Winner · Prajwalan Hackathon",
+    isWinner: true,
+    bgGradient: "from-[#201e23] via-[#171619] to-[#131314]",
+    keyMetric: "Multi-Modal AI Inference",
+    tech: ["React", "TypeScript", "Node.js", "Python"],
+    github: "https://github.com/Srikar132/deep-nox.git",
+    image: "/deepnox.png",
+  },
+  {
+    name: "InfraInk",
+    category: "Developer Blogging Platform",
+    tagline: "Developer Knowledge Platform",
+    description:
+      "High-performance technical blogging platform engineered for headless CMS content delivery and real-time sync.",
+    achievement: "Full Stack Academic Project",
+    isWinner: false,
+    bgGradient: "from-[#1d2220] via-[#151817] to-[#131314]",
+    keyMetric: "Headless CMS & Real-Time Sync",
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Sanity"],
     link: "https://infraink.vercel.app/",
     image: "/infraink.png",

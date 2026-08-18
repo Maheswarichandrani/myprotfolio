@@ -4,174 +4,185 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { LuTrophy } from "react-icons/lu";
-import { LUXE } from "@/lib/ease";
 import { ACADEMIC_PROJECTS } from "@/data/profile";
-import { TECH_ICONS } from "@/lib/tech-icons";
+import CustomButton from "@/components/CustomButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function AcademicSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(
     () => {
-      const cards = gsap.utils.toArray<HTMLElement>(".acad-card");
+      const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
+      if (cards.length < 3) return;
 
-      // heading reveal
-      gsap.from(".acad-head", {
-        autoAlpha: 0,
-        y: 40,
-        duration: 1,
-        stagger: 0.12,
-        ease: LUXE,
+      // Initial state:
+      // Card 0: Fully visible at top
+      // Card 1 & 2: Hidden (autoAlpha: 0) and positioned below (yPercent: 100)
+      gsap.set(cards[0], { autoAlpha: 1, yPercent: 0, scale: 1, filter: "brightness(1)", zIndex: 1 });
+      gsap.set(cards[1], { autoAlpha: 0, yPercent: 100, scale: 1, filter: "brightness(1)", zIndex: 2 });
+      gsap.set(cards[2], { autoAlpha: 0, yPercent: 100, scale: 1, filter: "brightness(1)", zIndex: 3 });
+
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 70%",
-          toggleActions: "play none none reverse",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.8,
         },
       });
 
-      cards.forEach((card, i) => {
-        // entrance reveal of each card's content
-        gsap.from(card.querySelectorAll(".acad-anim"), {
-          autoAlpha: 0,
-          y: 40,
-          filter: "blur(8px)",
-          duration: 1,
-          stagger: 0.12,
-          ease: LUXE,
-          scrollTrigger: {
-            trigger: card,
-            start: "top 70%",
-            toggleActions: "play none none reverse",
-          },
-        });
+      // --- STAGE 1: CARD 0 ACTIVE, THEN CARD 1 SLIDES UP ---
+      // Make Card 1 visible right as it begins sliding up
+      tl.to(cards[1], { autoAlpha: 1, duration: 0.01 }, 0.25);
 
-        // stacked-card: previous card scales down + dims as next slides over it
-        if (i < cards.length - 1) {
-          gsap.to(card, {
-            scale: 0.92,
-            autoAlpha: 0.4,
-            ease: "none",
-            scrollTrigger: {
-              trigger: cards[i + 1].parentElement,
-              start: "top bottom",
-              end: "top top",
-              scrub: true,
-            },
-          });
-        }
-      });
+      tl.to(cards[0], {
+        scale: 0.92,
+        filter: "brightness(0.4)",
+        borderRadius: "2.5rem",
+        ease: "none",
+        duration: 1,
+      }, 0.25);
+
+      tl.to(cards[1], {
+        yPercent: 0,
+        ease: "none",
+        duration: 1,
+      }, 0.25);
+
+      // --- STAGE 2: CARD 1 LOCKED, THEN CARD 2 SLIDES UP ---
+      // Make Card 2 visible right as it begins sliding up
+      tl.to(cards[2], { autoAlpha: 1, duration: 0.01 }, 1.55);
+
+      tl.to(cards[1], {
+        scale: 0.92,
+        filter: "brightness(0.4)",
+        borderRadius: "2.5rem",
+        ease: "none",
+        duration: 1,
+      }, 1.55);
+
+      tl.to(cards[2], {
+        yPercent: 0,
+        ease: "none",
+        duration: 1,
+      }, 1.55);
     },
     { scope: sectionRef }
   );
 
   return (
-    <section ref={sectionRef} id="academic" className="relative bg-background py-24">
-      <div className="px-5 sm:px-10 lg:px-14">
-        <p className="acad-head font-mono text-[10px] uppercase tracking-[0.35em] text-silver">
-          Academic Projects
-        </p>
-        <h2 className="acad-head silver-text font-clash mt-5 max-w-[18ch] text-[clamp(2rem,5vw,4rem)] leading-[1.05] font-semibold">
-          Hackathon Projects
-        </h2>
-        <p className="acad-head mt-5 max-w-[46ch] text-sm leading-relaxed text-dim lg:text-base">
-          Built and shipped during hackathons hosted at SRKR Engineering College
-          — fast, real builds under pressure.
-        </p>
-      </div>
+    <section ref={sectionRef} id="academic" className="relative h-[480vh] bg-background">
+      {/* Pinned Sticky Viewport */}
+      <div className="sticky top-0 flex h-screen w-screen overflow-hidden">
+        {ACADEMIC_PROJECTS.map((p, i) => {
+          const letter = p.name.charAt(0); // Monogram letter: H for HealVerse, D for DeepNox, I for InfraInk
 
-      {ACADEMIC_PROJECTS.map((p, i) => (
-        <div
-          key={p.name}
-          className="sticky top-0 flex min-h-screen items-center px-5 sm:px-10 lg:px-14"
-        >
-          <article className="acad-card relative grid w-full origin-top gap-8 overflow-hidden rounded-3xl bg-surface-2 p-6 shadow-[0_40px_100px_-25px_rgba(0,0,0,0.15),0_8px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-[0_40px_100px_-25px_rgba(0,0,0,0.9),0_8px_30px_-10px_rgba(0,0,0,0.7)] ring-1 ring-line will-change-transform sm:p-8 lg:grid-cols-12 lg:gap-12 lg:p-12">
-            {/* radial accent */}
-            <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(600px_circle_at_20%_20%,rgba(43, 43, 43, 0.06),transparent_60%)]" />
+          return (
+            <div
+              key={p.name}
+              ref={(el) => {
+                cardsRef.current[i] = el;
+              }}
+              className={`absolute inset-0 flex h-screen w-screen items-center justify-center bg-gradient-to-br ${p.bgGradient} p-0 will-change-transform`}
+            >
+              <article className="relative flex h-full w-full section-container flex-col justify-between p-6 sm:p-12 lg:p-16">
+                {/* Ambient Radial Glow */}
+                <div className="pointer-events-none absolute right-1/4 top-1/4 h-[35rem] w-[35rem] rounded-full bg-white/[0.03] blur-[120px]" />
+                <div className="pointer-events-none absolute left-10 bottom-10 h-[30rem] w-[30rem] rounded-full bg-zinc-500/[0.03] blur-[100px]" />
 
-            {/* left — name, tagline, desc, tech */}
-            <div className="relative z-10 flex flex-col justify-center lg:col-span-3">
-              <p className="acad-anim font-mono text-[10px] uppercase tracking-[0.3em] text-silver-dim">
-                0{i + 1} / 0{ACADEMIC_PROJECTS.length}
-              </p>
-              <h3 className="acad-anim silver-text font-clash mt-3 text-[clamp(2rem,4vw,3.25rem)] leading-none font-semibold">
-                {p.name}
-              </h3>
-              <p className="acad-anim mt-2 font-mono text-[10px] uppercase tracking-[0.25em] text-silver">
-                {p.tagline}
-              </p>
-              <p className="acad-anim mt-5 max-w-[42ch] text-sm leading-relaxed text-dim">
-                {p.description}
-              </p>
-              <div className="acad-anim mt-6 flex flex-wrap gap-1.5">
-                {p.tech.map((t) => {
-                  const Icon = TECH_ICONS[t];
-                  return (
-                    <span
-                      key={t}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-line bg-foreground/[0.04] px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-foreground/75"
-                    >
-                      {Icon && <Icon className="text-silver text-[1.15em]" />}
-                      {t}
+                {/* Top Bar: Creative Monogram & Glass Badge (Left) + Category/Tech Stack (Right) */}
+                <div className="relative z-10 flex items-start justify-between">
+                  {/* Creative Glass Monogram Emblem */}
+                  <div className="flex items-center gap-3 rounded-full border border-white/15 bg-black/40 px-4 py-2 backdrop-blur-md shadow-lg">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-clash text-sm font-bold text-white shadow-inner">
+                      {letter}
+                    </div>
+                    <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-300">
+                      {p.isWinner ? "HACKATHON WINNER" : "ACADEMIC BUILD"}
                     </span>
-                  );
-                })}
-              </div>
-            </div>
+                  </div>
 
-            {/* center — image */}
-            <div className="relative z-10 lg:col-span-6">
-              <div className="acad-img relative aspect-[16/10] overflow-hidden rounded-2xl ring-1 ring-line">
-                <img
-                  src={p.image}
-                  alt={p.name}
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              </div>
-            </div>
-
-            {/* right — achievement + github */}
-            <div className="relative z-10 flex flex-col justify-center gap-6 lg:col-span-3">
-              <div className="acad-anim flex items-start gap-3 rounded-2xl border border-line bg-foreground/[0.03] p-4">
-                <LuTrophy className="mt-0.5 shrink-0 text-lg text-silver" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    {p.achievement}
-                  </p>
-                  <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.2em] text-dim">
-                    Achievement
-                  </p>
+                  {/* Category Tag & Tech Stack */}
+                  <div className="flex flex-col items-end text-right font-mono">
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-silver">
+                      {p.category}
+                    </span>
+                    <div className="my-2.5 h-[1px] w-52 bg-white/15" />
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-zinc-400">
+                      {p.tech.join("  ·  ")}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              {p.github && (
-                <a
-                  href={p.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="acad-anim inline-flex items-center justify-center gap-2 rounded-[6px] border border-line-strong px-5 py-2.5 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-foreground/[0.06]"
-                >
-                  View GitHub <span aria-hidden>↗</span>
-                </a>
-              )}
-              {p.link && (
-                <a
-                  href={p.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="acad-anim inline-flex items-center justify-center gap-2 rounded-[6px] border border-line-strong px-5 py-2.5 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:bg-foreground/[0.06]"
-                >
-                  View Live <span aria-hidden>↗</span>
-                </a>
-              )}
+                {/* Middle Content Layout */}
+                <div className="relative z-10 my-auto grid items-center gap-12 lg:grid-cols-12">
+                  {/* Left Column: Info & Title */}
+                  <div className="flex flex-col lg:col-span-6">
+                    <div className="flex items-center gap-2">
+                      {p.isWinner ? (
+                        <span className="text-base">🏆</span>
+                      ) : (
+                        <span className="text-base">⚡</span>
+                      )}
+                      <span className="font-mono text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                        {p.achievement}
+                      </span>
+                    </div>
+
+                    {/* Project Title Heading (Restored previous font style) */}
+                    <h3 className="font-clash mt-3 text-[clamp(2.25rem,4.5vw,4.25rem)] font-medium uppercase leading-[0.98] tracking-tight text-white">
+                      {p.name}
+                    </h3>
+
+                    {/* Description — Small, Simple, Clean */}
+                    <p className="mt-4 max-w-[46ch] font-sans text-sm font-normal leading-relaxed text-zinc-300">
+                      {p.description}
+                    </p>
+
+                    <div className="mt-8">
+                      {p.github ? (
+                        <CustomButton href={p.github} target="_blank" isFlowing className="text-xs">
+                          View GitHub ↗
+                        </CustomButton>
+                      ) : p.link ? (
+                        <CustomButton href={p.link} target="_blank" isFlowing className="text-xs">
+                          View Live ↗
+                        </CustomButton>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  {/* Right Column: Image Preview */}
+                  <div className="relative flex items-center justify-center lg:col-span-6">
+                    <div className="group relative aspect-[16/10] w-full max-w-2xl overflow-hidden rounded-2xl border border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-sm">
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Footer Info */}
+                <div className="relative z-10 flex items-center justify-between border-t border-white/10 pt-4">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+                    SRKR ENGINEERING COLLEGE
+                  </span>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+                    {p.keyMetric}
+                  </span>
+                </div>
+              </article>
             </div>
-          </article>
-        </div>
-      ))}
+          );
+        })}
+      </div>
     </section>
   );
 }

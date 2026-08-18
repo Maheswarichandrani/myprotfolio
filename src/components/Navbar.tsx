@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { HiBars3, HiXMark } from "react-icons/hi2";
 import { LuSun, LuMoon } from "react-icons/lu";
 import { useTheme } from "next-themes";
+import CustomButton from "@/components/CustomButton";
 
 const LINKS = [
   { label: "About", href: "#about" },
@@ -87,14 +88,17 @@ export default function Navbar() {
             <ThemeToggle />
 
             {/* Desktop CTA */}
-            <a
-              href={CTA.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden rounded-[6px] bg-silver px-5 py-2 font-sans text-xs font-semibold text-background transition-colors hover:bg-foreground md:inline-flex"
-            >
-              {CTA.label}
-            </a>
+            <div className="hidden md:block">
+              <CustomButton
+                href={CTA.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                isFlowing
+                className="py-2 px-5 text-xs font-semibold"
+              >
+                {CTA.label}
+              </CustomButton>
+            </div>
 
             {/* Mobile toggle */}
             <button

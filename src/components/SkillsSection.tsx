@@ -80,16 +80,16 @@ export default function SkillsSection() {
   };
 
   return (
-    <section ref={sectionRef} id="skills" className="relative bg-background py-24 sm:py-32">
+    <section ref={sectionRef} id="skills" className="relative bg-background section-padding">
       {/* top separation line */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-line to-transparent" />
 
-      <div className="px-5 sm:px-10 lg:px-14">
+      <div className="section-container">
         {/* Header */}
         <p className="skills-head font-mono text-[10px] uppercase tracking-[0.35em] text-silver">
           My Expertise
         </p>
-        <h2 className="skills-head silver-text font-clash mt-5 max-w-[18ch] text-[clamp(2rem,5vw,4rem)] leading-[1.05] font-semibold">
+        <h2 className="skills-head silver-text font-clash mt-3 max-w-[18ch] text-[clamp(1.85rem,4vw,3.5rem)] leading-[1.1] font-medium">
           Skills & Tools
         </h2>
         <p className="skills-head mt-5 max-w-[46ch] text-sm leading-relaxed text-dim lg:text-base">
