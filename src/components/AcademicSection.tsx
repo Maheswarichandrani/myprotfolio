@@ -12,36 +12,44 @@ gsap.registerPlugin(ScrollTrigger);
 export default function AcademicSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const overlaysRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(
     () => {
       const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
+      const overlays = overlaysRef.current.filter(Boolean) as HTMLDivElement[];
       if (cards.length < 3) return;
 
-      // Initial state:
-      // Card 0: Fully visible at top
-      // Card 1 & 2: Hidden (autoAlpha: 0) and positioned below (yPercent: 100)
-      gsap.set(cards[0], { autoAlpha: 1, yPercent: 0, scale: 1, filter: "brightness(1)", zIndex: 1 });
-      gsap.set(cards[1], { autoAlpha: 0, yPercent: 100, scale: 1, filter: "brightness(1)", zIndex: 2 });
-      gsap.set(cards[2], { autoAlpha: 0, yPercent: 100, scale: 1, filter: "brightness(1)", zIndex: 3 });
+      gsap.set(cards, { willChange: "transform" });
+      gsap.set(overlays, { willChange: "opacity" });
+
+      // Initial state
+      gsap.set(cards[0], { autoAlpha: 1, yPercent: 0, scale: 1, zIndex: 1 });
+      gsap.set(cards[1], { autoAlpha: 0, yPercent: 100, scale: 1, zIndex: 2 });
+      gsap.set(cards[2], { autoAlpha: 0, yPercent: 100, scale: 1, zIndex: 3 });
+      gsap.set(overlays, { opacity: 0 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.8,
+          scrub: true,
+          anticipatePin: 1,
         },
       });
 
       // --- STAGE 1: CARD 0 ACTIVE, THEN CARD 1 SLIDES UP ---
-      // Make Card 1 visible right as it begins sliding up
       tl.to(cards[1], { autoAlpha: 1, duration: 0.01 }, 0.25);
 
       tl.to(cards[0], {
         scale: 0.92,
-        filter: "brightness(0.4)",
-        borderRadius: "2.5rem",
+        ease: "none",
+        duration: 1,
+      }, 0.25);
+
+      tl.to(overlays[0], {
+        opacity: 0.55,
         ease: "none",
         duration: 1,
       }, 0.25);
@@ -53,13 +61,16 @@ export default function AcademicSection() {
       }, 0.25);
 
       // --- STAGE 2: CARD 1 LOCKED, THEN CARD 2 SLIDES UP ---
-      // Make Card 2 visible right as it begins sliding up
       tl.to(cards[2], { autoAlpha: 1, duration: 0.01 }, 1.55);
 
       tl.to(cards[1], {
         scale: 0.92,
-        filter: "brightness(0.4)",
-        borderRadius: "2.5rem",
+        ease: "none",
+        duration: 1,
+      }, 1.55);
+
+      tl.to(overlays[1], {
+        opacity: 0.55,
         ease: "none",
         duration: 1,
       }, 1.55);
@@ -86,7 +97,8 @@ export default function AcademicSection() {
               ref={(el) => {
                 cardsRef.current[i] = el;
               }}
-              className={`absolute inset-0 flex h-screen w-screen items-center justify-center bg-gradient-to-br ${p.bgGradient} p-0 will-change-transform`}
+              className={`absolute inset-0 flex h-screen w-screen items-center justify-center overflow-hidden rounded-[2.5rem] bg-gradient-to-br ${p.bgGradient} p-0 will-change-transform`}
+              style={{ transform: "translateZ(0)" }}
             >
               <article className="relative flex h-full w-full section-container flex-col justify-between p-6 sm:p-12 lg:p-16">
                 {/* Ambient Radial Glow */}
@@ -132,12 +144,12 @@ export default function AcademicSection() {
                       </span>
                     </div>
 
-                    {/* Project Title Heading (Restored previous font style) */}
+                    {/* Project Title Heading */}
                     <h3 className="font-clash mt-3 text-[clamp(2.25rem,4.5vw,4.25rem)] font-medium uppercase leading-[0.98] tracking-tight text-white">
                       {p.name}
                     </h3>
 
-                    {/* Description — Small, Simple, Clean */}
+                    {/* Description */}
                     <p className="mt-4 max-w-[46ch] font-sans text-sm font-normal leading-relaxed text-zinc-300">
                       {p.description}
                     </p>
@@ -179,6 +191,14 @@ export default function AcademicSection() {
                   </span>
                 </div>
               </article>
+
+              {/* Dimming overlay — animated via opacity only, keeps scroll smooth */}
+              <div
+                ref={(el) => {
+                  overlaysRef.current[i] = el;
+                }}
+                className="pointer-events-none absolute inset-0 z-20 bg-black opacity-0"
+              />
             </div>
           );
         })}

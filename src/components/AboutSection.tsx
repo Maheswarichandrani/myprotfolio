@@ -13,7 +13,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 const COUNT = ABOUT_SLIDES.length;
 
-// gradient placeholders until real images land in ABOUT_SLIDES
 const PLACEHOLDERS = [
   "from-zinc-800 via-zinc-900 to-black",
   "from-neutral-700 via-zinc-900 to-black",
@@ -23,9 +22,9 @@ const PLACEHOLDERS = [
 
 export default function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const clipRef = useRef<HTMLDivElement>(null); // the overflow-hidden "window" that holds the list
   const listRef = useRef<HTMLDivElement>(null);
   const numColRef = useRef<HTMLDivElement>(null);
-  const activeRef = useRef(0);
   const lenis = useLenis();
 
   useGSAP(
@@ -33,81 +32,56 @@ export default function AboutSection() {
       const slides = gsap.utils.toArray<HTMLElement>(".about-slide");
       const items = gsap.utils.toArray<HTMLElement>(".about-item");
 
-      gsap.set(slides.slice(1), { autoAlpha: 0, scale: 1.05 });
-      gsap.set(items.slice(1), { opacity: 0.3 });
-
-      const setActive = (next: number) => {
-        const prev = activeRef.current;
-        if (next === prev) return;
-        activeRef.current = next;
-
-        // incoming image stack wiping in
-        gsap.killTweensOf([slides[prev], slides[next]]);
-        slides.forEach((s, i) =>
-          gsap.set(s, { zIndex: i === next ? 2 : i === prev ? 1 : 0 })
-        );
-        gsap.to(slides[prev], { scale: 0.96, duration: 1.2, ease: LUXE });
-        gsap.fromTo(
-          slides[next],
-          { autoAlpha: 0, scale: 1.06, clipPath: "inset(0% 100% 100% 0%)" },
-          {
-            scale: 1,
-            clipPath: "inset(0% 0% 0% 0%)",
-            duration: 1.2,
-            ease: LUXE,
-            onComplete: () => gsap.set(slides[prev], { autoAlpha: 0, scale: 1 }),
-          }
-        );
-        gsap.to(slides[next], { autoAlpha: 1, duration: 0.35, ease: "power1.out" });
-
-        // Translate text list vertically as user scrolls
-        gsap.to(listRef.current, {
-          y: -items[next].offsetTop,
-          duration: 1.1,
-          ease: LUXE,
-          overwrite: "auto",
-        });
-
-        items.forEach((el, i) => {
-          if (i === next) {
-            gsap.to(el, { opacity: 1, duration: 0.9, ease: LUXE, overwrite: "auto" });
-            gsap.fromTo(
-              el.children,
-              { y: 14 },
-              { y: 0, stagger: 0.05, duration: 1.0, ease: LUXE, overwrite: "auto" }
-            );
-          } else {
-            gsap.to(el, {
-              opacity: 0.3,
-              duration: 0.8,
-              ease: LUXE,
-              overwrite: "auto",
-            });
-          }
-        });
-
-        gsap.to(numColRef.current, {
-          y: `${-next}em`,
-          duration: 0.9,
-          ease: LUXE,
-          overwrite: "auto",
-        });
+      // helper: y-offset so that `items[i]` sits vertically centered inside clipRef
+      const centerY = (i: number) => {
+        const container = clipRef.current;
+        const item = items[i];
+        if (!container || !item) return 0;
+        return -(item.offsetTop + item.offsetHeight / 2 - container.offsetHeight / 2);
       };
 
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "bottom bottom",
-        onUpdate: (self) => {
-          const p = self.progress;
-          let idx = 0;
-          if (p < 0.22) idx = 0;
-          else if (p < 0.45) idx = 1;
-          else if (p < 0.68) idx = 2;
-          else idx = 3;
-          setActive(idx);
+      gsap.set(slides, { willChange: "clip-path, transform, opacity" });
+      gsap.set(slides.slice(1), { autoAlpha: 0, scale: 1.06, clipPath: "inset(0% 100% 100% 0%)" });
+      gsap.set(slides[0], { autoAlpha: 1, scale: 1, clipPath: "inset(0% 0% 0% 0%)" });
+      gsap.set(items.slice(1), { opacity: 0.3 });
+      gsap.set(listRef.current, { y: centerY(0) });
+
+      const SLOT = 1;      // one scroll "unit" per slide
+      const WINDOW = 0.5;  // portion of that unit spent transitioning
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: true, // tied directly to scroll position — can't fall behind, can't stutter
         },
       });
+
+      for (let i = 0; i < COUNT - 1; i++) {
+        const start = (i + 1) * SLOT - WINDOW / 2;
+
+        // outgoing image: same wipe-out feel as before
+        tl.to(slides[i], { scale: 0.96, ease: LUXE, duration: WINDOW }, start);
+
+        // incoming image: same diagonal wipe-in as your original
+        tl.fromTo(
+          slides[i + 1],
+          { autoAlpha: 0, scale: 1.06, clipPath: "inset(0% 100% 100% 0%)" },
+          { autoAlpha: 1, scale: 1, clipPath: "inset(0% 0% 0% 0%)", ease: LUXE, duration: WINDOW },
+          start
+        );
+        // let the outgoing slide fully hide once the incoming one covers it
+        tl.set(slides[i], { autoAlpha: 0, scale: 1 }, start + WINDOW);
+
+        // text list — now centers the active item instead of pinning to top
+        tl.to(listRef.current, { y: () => centerY(i + 1), ease: LUXE, duration: WINDOW }, start);
+
+        tl.to(items[i], { opacity: 0.3, ease: LUXE, duration: WINDOW }, start);
+        tl.to(items[i + 1], { opacity: 1, ease: LUXE, duration: WINDOW }, start);
+
+        tl.to(numColRef.current, { y: `${-(i + 1)}em`, ease: LUXE, duration: WINDOW }, start);
+      }
     },
     { scope: sectionRef }
   );
@@ -125,15 +99,13 @@ export default function AboutSection() {
         {/* image stack */}
         <div className="relative h-[34vh] overflow-hidden rounded-3xl border border-line lg:h-auto lg:w-[58%]">
           {ABOUT_SLIDES.map((slide, i) => (
-            <div key={i} className="about-slide absolute inset-0 will-change-transform">
-              <div
-                className={`relative h-full w-full bg-gradient-to-br ${PLACEHOLDERS[i]} overflow-hidden`}
-              >
+            <div key={i} className="about-slide absolute inset-0" style={{ transform: "translateZ(0)" }}>
+              <div className={`relative h-full w-full bg-gradient-to-br ${PLACEHOLDERS[i]} overflow-hidden`}>
                 {slide.image && (
                   <img
                     src={slide.image}
                     alt={slide.title}
-                    loading="lazy"
+                    loading={i === 0 ? "eager" : "lazy"}
                     className="absolute inset-0 h-full w-full object-cover"
                   />
                 )}
@@ -167,15 +139,11 @@ export default function AboutSection() {
             </div>
           </div>
 
-          {/* clip window — list translates vertically as user scrolls */}
-          <div className="relative mt-6 min-h-0 flex-1 overflow-hidden">
+          {/* clip window — list now centers the active item instead of top-aligning it */}
+          <div ref={clipRef} className="relative mt-6 min-h-0 flex-1 overflow-hidden">
             <div ref={listRef} className="flex flex-col gap-16 will-change-transform pb-24">
               {ABOUT_SLIDES.map((slide, i) => (
-                <div
-                  key={i}
-                  onClick={() => scrollToSlide(i)}
-                  className="about-item cursor-pointer space-y-3 pb-8"
-                >
+                <div key={i} onClick={() => scrollToSlide(i)} className="about-item cursor-pointer space-y-3 pb-8">
                   <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-silver font-medium">
                     0{i + 1} — {slide.label}
                   </span>
@@ -187,35 +155,24 @@ export default function AboutSection() {
                   </p>
                   {slide.link && (
                     <div className="pt-2">
-                      <CustomButton
-                        href={slide.link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        isFlowing
-                        className="text-xs"
-                      >
+                      <CustomButton href={slide.link.href} target="_blank" rel="noopener noreferrer" isFlowing className="text-xs">
                         View Live — {slide.link.label} ↗
                       </CustomButton>
                     </div>
                   )}
                   <div className="flex max-w-[52ch] flex-wrap gap-2 rounded-xl border border-line bg-surface-2/60 p-3.5">
                     {slide.tags.map((tag, ti) => (
-                      <span
-                        key={tag}
-                        className="font-mono text-[10px] uppercase tracking-wider text-dim font-medium"
-                      >
+                      <span key={tag} className="font-mono text-[10px] uppercase tracking-wider text-dim font-medium">
                         {tag}
-                        {ti < slide.tags.length - 1 && (
-                          <span className="ml-2 text-foreground/20">·</span>
-                        )}
+                        {ti < slide.tags.length - 1 && <span className="ml-2 text-foreground/20">·</span>}
                       </span>
                     ))}
                   </div>
                 </div>
               ))}
             </div>
-
-            {/* soft fade at the bottom of the clip window */}
+            {/* fades now sit top AND bottom since content is centered, not top-anchored */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-background to-transparent" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent" />
           </div>
         </div>
