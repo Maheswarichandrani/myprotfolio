@@ -81,7 +81,7 @@ const CustomButton = ({
         ref={fillRef}
         className={cn(
           "absolute inset-0 translate-y-[100%] pointer-events-none transition-colors",
-          isFlowing ? "bg-foreground" : "bg-foreground"
+          isFlowing ? "bg-rose" : "bg-rose"
         )}
       />
 

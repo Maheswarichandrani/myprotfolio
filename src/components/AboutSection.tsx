@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useLenis } from "@/providers/SmoothScrollProvider";
 import { ABOUT_SLIDES } from "@/data/profile";
-import { LUXE } from "@/lib/ease";
 import CustomButton from "@/components/CustomButton";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -14,10 +13,10 @@ gsap.registerPlugin(ScrollTrigger);
 const COUNT = ABOUT_SLIDES.length;
 
 const PLACEHOLDERS = [
-  "from-zinc-800 via-zinc-900 to-black",
-  "from-neutral-700 via-zinc-900 to-black",
-  "from-stone-800 via-neutral-900 to-black",
-  "from-zinc-700 via-stone-900 to-black",
+  "from-[#d9c6a6] via-[#bfa47e] to-[#8a6f58]",
+  "from-[#cbb38d] via-[#a68863] to-[#6e5442]",
+  "from-[#e0cfb2] via-[#b79a73] to-[#7c604b]",
+  "from-[#c7ad86] via-[#9c7e5b] to-[#5c4636]",
 ];
 
 export default function AboutSection() {
@@ -40,48 +39,53 @@ export default function AboutSection() {
         return -(item.offsetTop + item.offsetHeight / 2 - container.offsetHeight / 2);
       };
 
-      gsap.set(slides, { willChange: "clip-path, transform, opacity" });
-      gsap.set(slides.slice(1), { autoAlpha: 0, scale: 1.06, clipPath: "inset(0% 100% 100% 0%)" });
-      gsap.set(slides[0], { autoAlpha: 1, scale: 1, clipPath: "inset(0% 0% 0% 0%)" });
+      const media = gsap.utils.toArray<HTMLElement>(".about-media");
+
+      // Clip-path only on the slide wrapper; scale lives on the inner media as a
+      // pure GPU transform → image stays crisp (no re-raster blur, no opacity mud).
+      gsap.set(slides, { zIndex: (i) => i, willChange: "clip-path" });
+      gsap.set(media, { force3D: true, willChange: "transform" });
+      gsap.set(slides.slice(1), { clipPath: "inset(100% 0% 0% 0%)" });
+      gsap.set(slides[0], { clipPath: "inset(0% 0% 0% 0%)" });
+      gsap.set(media.slice(1), { scale: 1.12, yPercent: 6 });
       gsap.set(items.slice(1), { opacity: 0.3 });
       gsap.set(listRef.current, { y: centerY(0) });
 
       const SLOT = 1;      // one scroll "unit" per slide
-      const WINDOW = 0.5;  // portion of that unit spent transitioning
+      const WINDOW = 0.8;  // most of the unit is spent transitioning → slow, readable
+      const EASE = "power2.inOut"; // symmetric: gentle start, gentle settle (no snap)
 
       const tl = gsap.timeline({
+        defaults: { ease: EASE, duration: WINDOW },
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
           end: "bottom bottom",
-          scrub: true, // tied directly to scroll position — can't fall behind, can't stutter
+          scrub: 0.8, // short catch-up on top of Lenis → silky, never jerky
         },
       });
 
       for (let i = 0; i < COUNT - 1; i++) {
         const start = (i + 1) * SLOT - WINDOW / 2;
 
-        // outgoing image: same wipe-out feel as before
-        tl.to(slides[i], { scale: 0.96, ease: LUXE, duration: WINDOW }, start);
+        // outgoing: drifts up + eases back slightly (parallax under the wipe)
+        tl.to(media[i], { scale: 1.04, yPercent: -6 }, start);
 
-        // incoming image: same diagonal wipe-in as your original
-        tl.fromTo(
-          slides[i + 1],
-          { autoAlpha: 0, scale: 1.06, clipPath: "inset(0% 100% 100% 0%)" },
-          { autoAlpha: 1, scale: 1, clipPath: "inset(0% 0% 0% 0%)", ease: LUXE, duration: WINDOW },
-          start
-        );
-        // let the outgoing slide fully hide once the incoming one covers it
-        tl.set(slides[i], { autoAlpha: 0, scale: 1 }, start + WINDOW);
+        // incoming: clean curtain wipe from the bottom, image settles into place
+        tl.to(slides[i + 1], { clipPath: "inset(0% 0% 0% 0%)" }, start);
+        tl.to(media[i + 1], { scale: 1, yPercent: 0 }, start);
 
-        // text list — now centers the active item instead of pinning to top
-        tl.to(listRef.current, { y: () => centerY(i + 1), ease: LUXE, duration: WINDOW }, start);
+        // text list centers the active item
+        tl.to(listRef.current, { y: () => centerY(i + 1) }, start);
+        tl.to(items[i], { opacity: 0.3 }, start);
+        tl.to(items[i + 1], { opacity: 1 }, start);
 
-        tl.to(items[i], { opacity: 0.3, ease: LUXE, duration: WINDOW }, start);
-        tl.to(items[i + 1], { opacity: 1, ease: LUXE, duration: WINDOW }, start);
-
-        tl.to(numColRef.current, { y: `${-(i + 1)}em`, ease: LUXE, duration: WINDOW }, start);
+        tl.to(numColRef.current, { y: `${-(i + 1)}em` }, start);
       }
+
+      // pad timeline to exactly COUNT units so each slide owns an equal scroll zone
+      // (matches scrollToSlide math)
+      tl.set({}, {}, COUNT * SLOT);
     },
     { scope: sectionRef }
   );
@@ -94,13 +98,13 @@ export default function AboutSection() {
   };
 
   return (
-    <section ref={sectionRef} id="about" className="relative h-[480vh] bg-background mt-24 lg:mt-36">
+    <section ref={sectionRef} id="about" className="relative h-[600vh] bg-background mt-24 lg:mt-36">
       <div className="sticky top-0 flex h-screen flex-col gap-6 overflow-hidden section-container py-8 sm:py-12 lg:flex-row lg:gap-12 lg:py-12">
         {/* image stack */}
         <div className="relative h-[34vh] overflow-hidden rounded-3xl border border-line lg:h-auto lg:w-[58%]">
           {ABOUT_SLIDES.map((slide, i) => (
-            <div key={i} className="about-slide absolute inset-0" style={{ transform: "translateZ(0)" }}>
-              <div className={`relative h-full w-full bg-gradient-to-br ${PLACEHOLDERS[i]} overflow-hidden`}>
+            <div key={i} className="about-slide absolute inset-0 overflow-hidden">
+              <div className={`about-media relative h-full w-full bg-gradient-to-br ${PLACEHOLDERS[i]} overflow-hidden`}>
                 {slide.image && (
                   <img
                     src={slide.image}
@@ -144,7 +148,7 @@ export default function AboutSection() {
             <div ref={listRef} className="flex flex-col gap-16 will-change-transform pb-24">
               {ABOUT_SLIDES.map((slide, i) => (
                 <div key={i} onClick={() => scrollToSlide(i)} className="about-item cursor-pointer space-y-3 pb-8">
-                  <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-silver font-medium">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-rose font-medium">
                     0{i + 1} — {slide.label}
                   </span>
                   <h3 className="font-clash text-[clamp(1.4rem,2.6vw,2.25rem)] leading-[1.12] font-medium text-foreground">

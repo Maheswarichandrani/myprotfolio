@@ -13,16 +13,14 @@ const markDone = () => {
   window.dispatchEvent(new CustomEvent("preloader:done"));
 };
 
+const STEPS = ["compiling components", "loading projects", "ready"];
+
 export default function Preloader() {
   const [done, setDone] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const pageRef = useRef<HTMLDivElement>(null);
-  const castRef = useRef<HTMLDivElement>(null);
-  const lineRef = useRef<HTMLDivElement>(null);
-  const lineWrapRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
-  const counterRef = useRef<HTMLDivElement>(null);
-  const roleRef = useRef<HTMLParagraphElement>(null);
+  const countRef = useRef<HTMLSpanElement>(null);
+  const stepRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (done) return;
@@ -32,8 +30,6 @@ export default function Preloader() {
 
   useGSAP(
     () => {
-      // Already shown this browser → skip straight to the site. Runs in a
-      // layout effect (before paint), so there's no flash of the preloader.
       let seen = false;
       try {
         seen = localStorage.getItem(SEEN_KEY) === "1";
@@ -48,187 +44,77 @@ export default function Preloader() {
       }
 
       const counter = { v: 0 };
-      const tl = gsap.timeline({
-        defaults: { ease: "power3.out" },
-        onComplete: () => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      tl.from(".pl-line > span", { yPercent: 110, duration: 0.9, stagger: 0.08 })
+        .from(".pl-meta", { opacity: 0, y: 6, duration: 0.6, stagger: 0.06 }, "-=0.5")
+        .to(
+          counter,
+          {
+            v: 100,
+            duration: 1.8,
+            ease: "power2.inOut",
+            onUpdate: () => {
+              const v = Math.round(counter.v);
+              if (barRef.current) barRef.current.style.transform = `scaleX(${counter.v / 100})`;
+              if (countRef.current) countRef.current.textContent = String(v).padStart(3, "0");
+              if (stepRef.current) stepRef.current.textContent = STEPS[v < 45 ? 0 : v < 100 ? 1 : 2];
+            },
+          },
+          "-=0.4"
+        )
+        .to(".pl-line > span", { yPercent: -110, duration: 0.6, stagger: 0.05, ease: "power3.in" }, "+=0.2")
+        .to(".pl-meta", { opacity: 0, duration: 0.3 }, "<")
+        .add(() => {
           try {
             localStorage.setItem(SEEN_KEY, "1");
           } catch {
-            /* ignore — preloader simply shows again next time */
+            /* ignore */
           }
-          markDone();
-          setDone(true);
-        },
-      });
-
-      const setBar = gsap.quickSetter(lineRef.current, "scaleX");
-      const counterText = document.getElementById("preloader-counter-text");
-
-      const draw = () => {
-        const v = counter.v;
-        if (counterText) {
-          counterText.textContent = String(Math.round(v));
-        }
-        setBar(v / 100);
-      };
-
-      // phase 1 — frame in, then count up smoothly through every number
-      tl.set(lineWrapRef.current, { y: "38vh" })
-        .to(".pl-meta", { opacity: 1, duration: 0.8, stagger: 0.12 })
-        .fromTo(
-          barRef.current,
-          { scaleY: 0 },
-          { scaleY: 1, duration: 0.9, ease: "expo.inOut" },
-          "-=0.5"
-        )
-        .fromTo(
-          counterRef.current,
-          { yPercent: 110 },
-          { yPercent: 0, duration: 0.9, ease: "expo.out" },
-          "-=0.4"
-        )
-        // single continuous roll 0 → 100 — no skipped values, gentle ease.
-        .to(
-          counter,
-          { v: 100, duration: 3.4, ease: "power1.inOut", onUpdate: draw },
-          "-=0.2"
-        );
-
-      // phase 2 — counter exits, line sweeps bottom -> center, name reveals
-      tl.to(counterRef.current, {
-        yPercent: 115,
-        duration: 0.8,
-        ease: "expo.in",
-      })
-        .to(
-          barRef.current,
-          { scaleY: 0, transformOrigin: "top center", duration: 0.7, ease: "expo.inOut" },
-          "<"
-        )
-        .to(
-          lineWrapRef.current,
-          { y: 0, duration: 1.1, ease: "expo.inOut" },
-          "-=0.4"
-        )
-        .fromTo(
-          ".pl-letter",
-          { yPercent: 120, opacity: 0, filter: "blur(10px)" },
-          {
-            yPercent: 0,
-            opacity: 1,
-            filter: "blur(0px)",
-            stagger: 0.045,
-            duration: 0.9,
-            ease: "expo.out",
-          },
-          "-=0.15"
-        )
-        .fromTo(
-          roleRef.current,
-          { opacity: 0, letterSpacing: "0.7em" },
-          { opacity: 1, letterSpacing: "0.35em", duration: 1.1, ease: "power2.out" },
-          "-=0.55"
-        )
-        .to({}, { duration: 0.7 })
-        // phase 3 — clear the stage, turn the page
-        .to(".pl-letter", {
-          yPercent: -120,
-          opacity: 0,
-          stagger: 0.025,
-          duration: 0.6,
-          ease: "expo.in",
+          // Dispatch outside this GSAP callback: listeners (hero, navbar) create
+          // tweens with selector strings, and inside a callback they'd be scoped to
+          // the preloader's context — "target not found".
+          setTimeout(markDone, 0);
         })
-        .to(roleRef.current, { opacity: 0, duration: 0.4 }, "<")
-        .to(
-          lineRef.current,
-          { scaleX: 0, transformOrigin: "right center", duration: 0.8, ease: "expo.inOut" },
-          "<+=0.1"
-        )
-        .to(".pl-meta", { opacity: 0, duration: 0.4 }, "<")
-        .to(castRef.current, { opacity: 0.5, duration: 0.7, ease: "power1.in" }, "+=0.1")
-        .to(
-          pageRef.current,
-          { rotationY: -110, duration: 1.5, ease: "power2.inOut" },
-          "<"
-        )
-        .to(pageRef.current, { opacity: 0, duration: 0.35, ease: "power1.out" }, "-=0.45")
-        .to(castRef.current, { opacity: 0, duration: 0.8, ease: "power2.out" }, "-=0.8");
+        .to(rootRef.current, { yPercent: -100, duration: 0.9, ease: "power3.inOut" })
+        .add(() => setDone(true));
     },
     { scope: rootRef }
   );
 
   if (done) return null;
 
-  const words = PROFILE.fullName.toUpperCase().split(" ");
+  const [first, ...rest] = PROFILE.fullName.split(" ");
 
   return (
-    <div ref={rootRef} className="fixed inset-0 z-[100] [perspective:1600px]">
-      {/* shadow the lifting page casts on the revealed site */}
-      <div
-        ref={castRef}
-        className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent opacity-0"
-      />
+    <div ref={rootRef} className="fixed inset-0 z-[100] flex flex-col bg-[#f3ebe0] text-[#2b1d15] will-change-transform">
+      <div className="pl-meta flex items-center justify-between px-6 pt-6 font-mono text-[11px] text-[#8a7262] sm:px-10">
+        <span>{PROFILE.role}</span>
+        <span>portfolio — {PROFILE.year}</span>
+      </div>
 
-      <div
-        ref={pageRef}
-        className="relative flex h-full w-full origin-left flex-col items-center justify-center bg-black backface-hidden will-change-transform"
-      >
-        <div className="pl-meta absolute top-6 left-6 font-mono text-[10px] uppercase tracking-[0.3em] text-white/50 opacity-0">
-          Portfolio — ©{PROFILE.year}
-        </div>
-        <div className="pl-meta absolute top-6 right-6 hidden font-mono text-[10px] uppercase tracking-[0.3em] text-white/50 opacity-0 sm:block">
-          {PROFILE.tagline}
-        </div>
-
-        <div ref={lineWrapRef} className="w-[80vw] max-w-[820px] will-change-transform">
-          <div ref={lineRef} className="loader-line origin-left scale-x-0" />
-        </div>
-
-        <h1 className="font-clash mt-8 flex max-w-[90vw] flex-wrap justify-center gap-x-[0.3em] text-[clamp(1.6rem,6.5vw,4.5rem)] font-medium tracking-tight sm:mt-10">
-          {words.map((word, wi) => (
-            <span key={wi} className="flex overflow-hidden">
-              {word.split("").map((c, i) => (
-                <span
-                  key={i}
-                  className="pl-letter silver-text inline-block will-change-transform"
-                >
-                  {c}
-                </span>
-              ))}
-            </span>
-          ))}
+      <div className="flex flex-1 flex-col justify-center px-6 sm:px-10">
+        <h1 className="font-display text-[clamp(2.8rem,10vw,8rem)] font-semibold leading-[0.95] tracking-[-0.04em]">
+          <span className="pl-line block overflow-hidden pb-[0.06em]">
+            <span className="block">{first}</span>
+          </span>
+          <span className="pl-line block overflow-hidden pb-[0.06em]">
+            <span className="block text-[#8a7262]">{rest.join(" ")}</span>
+          </span>
         </h1>
+      </div>
 
-        <p
-          ref={roleRef}
-          className="mt-6 px-4 text-center font-mono text-[13px] font-medium uppercase tracking-[0.35em] text-silver opacity-0 [text-shadow:0_0_24px_rgba(192,192,192,0.35)] sm:text-sm"
-        >
-          {PROFILE.role}
-        </p>
-
-        {/* big counter — bottom left, next to the vertical line */}
-        <div className="absolute bottom-[8vh] left-6 flex items-center gap-3">
-          <div className="h-[2.5rem] sm:h-[4rem] w-[2px] overflow-hidden">
-            <div
-              ref={barRef}
-              className="h-full w-full bg-gradient-to-b from-silver to-silver-dim origin-bottom will-change-transform"
-            />
-          </div>
-          <div ref={counterRef} className="flex items-baseline overflow-hidden leading-none will-change-transform">
-            <span
-              id="preloader-counter-text"
-              className="font-clash text-[clamp(2.5rem,6.5vw,5rem)] leading-none font-semibold tracking-tight tabular-nums silver-text"
-            >
-              0
-            </span>
-            <span className="silver-text font-clash text-[clamp(1.2rem,3vw,2rem)] leading-none font-semibold ml-1">
-              %
-            </span>
-          </div>
+      <div className="px-6 pb-8 sm:px-10">
+        <div className="pl-meta mb-3 flex items-center justify-between font-mono text-[11px] text-[#8a7262]">
+          <span>
+            <span className="text-[#a4582a]">&gt;</span> <span ref={stepRef}>compiling components</span>
+          </span>
+          <span className="tabular-nums text-[#2b1d15]">
+            <span ref={countRef}>000</span>%
+          </span>
         </div>
-
-        <div className="pl-meta absolute right-6 bottom-6 font-mono text-[10px] uppercase tracking-[0.3em] text-white/40 opacity-0">
-          Initialising experience
+        <div className="pl-meta h-px w-full bg-[#2b1d15]/10">
+          <div ref={barRef} className="h-full w-full origin-left bg-[#a4582a]" style={{ transform: "scaleX(0)" }} />
         </div>
       </div>
     </div>

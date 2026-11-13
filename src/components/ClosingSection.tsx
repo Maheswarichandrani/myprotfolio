@@ -71,7 +71,7 @@ export default function ClosingSection() {
         <p className="cl-meta font-mono text-[10px] uppercase tracking-[0.35em] text-dim sm:text-[11px]">
           Full Stack Developer <span className="text-foreground/20">•</span> AI Builder{" "}
           <span className="text-foreground/20">•</span>{" "}
-          <span className="text-silver">Open to Work</span>
+          <span className="text-rose">Open to Work</span>
         </p>
 
         <h2 className="font-clash mt-8 text-[clamp(2.8rem,10vw,8.5rem)] leading-[0.95] font-semibold tracking-tight uppercase">

@@ -102,28 +102,28 @@ export default function AcademicSection() {
             >
               <article className="relative flex h-full w-full section-container flex-col justify-between p-6 sm:p-12 lg:p-16">
                 {/* Ambient Radial Glow */}
-                <div className="pointer-events-none absolute right-1/4 top-1/4 h-[35rem] w-[35rem] rounded-full bg-white/[0.03] blur-[120px]" />
-                <div className="pointer-events-none absolute left-10 bottom-10 h-[30rem] w-[30rem] rounded-full bg-zinc-500/[0.03] blur-[100px]" />
+                <div className="pointer-events-none absolute right-1/4 top-1/4 h-[35rem] w-[35rem] rounded-full bg-[radial-gradient(circle,rgba(201,164,106,0.07),transparent_65%)]" />
+                <div className="pointer-events-none absolute left-10 bottom-10 h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(circle,rgba(201,164,106,0.05),transparent_65%)]" />
 
                 {/* Top Bar: Creative Monogram & Glass Badge (Left) + Category/Tech Stack (Right) */}
                 <div className="relative z-10 flex items-start justify-between">
                   {/* Creative Glass Monogram Emblem */}
-                  <div className="flex items-center gap-3 rounded-full border border-white/15 bg-black/40 px-4 py-2 backdrop-blur-md shadow-lg">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 font-clash text-sm font-bold text-white shadow-inner">
+                  <div className="flex items-center gap-3 rounded-full border border-[#e6d3b3]/15 bg-[#120b07]/50 px-4 py-2 shadow-lg">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e6d3b3]/10 font-clash text-sm font-bold text-[#f1e6d2] shadow-inner">
                       {letter}
                     </div>
-                    <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-300">
+                    <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-[#d9c6a6]">
                       {p.isWinner ? "HACKATHON WINNER" : "ACADEMIC BUILD"}
                     </span>
                   </div>
 
                   {/* Category Tag & Tech Stack */}
                   <div className="flex flex-col items-end text-right font-mono">
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-silver">
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#c9a46a]">
                       {p.category}
                     </span>
-                    <div className="my-2.5 h-[1px] w-52 bg-white/15" />
-                    <span className="text-[10px] uppercase tracking-[0.15em] text-zinc-400">
+                    <div className="my-2.5 h-[1px] w-52 bg-[#e6d3b3]/15" />
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-[#b39c7d]">
                       {p.tech.join("  ·  ")}
                     </span>
                   </div>
@@ -139,18 +139,18 @@ export default function AcademicSection() {
                       ) : (
                         <span className="text-base">⚡</span>
                       )}
-                      <span className="font-mono text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                      <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[#d9c6a6]">
                         {p.achievement}
                       </span>
                     </div>
 
                     {/* Project Title Heading */}
-                    <h3 className="font-clash mt-3 text-[clamp(2.25rem,4.5vw,4.25rem)] font-medium uppercase leading-[0.98] tracking-tight text-white">
+                    <h3 className="font-clash mt-3 text-[clamp(2.25rem,4.5vw,4.25rem)] font-medium uppercase leading-[0.98] tracking-tight text-[#f1e6d2]">
                       {p.name}
                     </h3>
 
                     {/* Description */}
-                    <p className="mt-4 max-w-[46ch] font-sans text-sm font-normal leading-relaxed text-zinc-300">
+                    <p className="mt-4 max-w-[46ch] font-sans text-sm font-normal leading-relaxed text-[#d9c6a6]">
                       {p.description}
                     </p>
 
@@ -169,24 +169,24 @@ export default function AcademicSection() {
 
                   {/* Right Column: Image Preview */}
                   <div className="relative flex items-center justify-center lg:col-span-6">
-                    <div className="group relative aspect-[16/10] w-full max-w-2xl overflow-hidden rounded-2xl border border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-sm">
+                    <div className="group relative aspect-[16/10] w-full max-w-2xl overflow-hidden rounded-2xl border border-[#e6d3b3]/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)]">
                       <img
                         src={p.image}
                         alt={p.name}
                         loading="lazy"
                         className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#17100c]/70 via-transparent to-transparent" />
                     </div>
                   </div>
                 </div>
 
                 {/* Bottom Footer Info */}
-                <div className="relative z-10 flex items-center justify-between border-t border-white/10 pt-4">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+                <div className="relative z-10 flex items-center justify-between border-t border-[#e6d3b3]/10 pt-4">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#8f7a5f]">
                     SRKR ENGINEERING COLLEGE
                   </span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#8f7a5f]">
                     {p.keyMetric}
                   </span>
                 </div>
@@ -197,7 +197,7 @@ export default function AcademicSection() {
                 ref={(el) => {
                   overlaysRef.current[i] = el;
                 }}
-                className="pointer-events-none absolute inset-0 z-20 bg-black opacity-0"
+                className="pointer-events-none absolute inset-0 z-20 bg-[#0f0905] opacity-0"
               />
             </div>
           );

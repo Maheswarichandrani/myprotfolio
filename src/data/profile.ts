@@ -5,6 +5,16 @@ export const PROFILE = {
   year: "2026",
 };
 
+/** Contact page details. */
+export const CONTACT = {
+  email: "chandranimaheswari13@gmail.com",
+  location: "India · IST (UTC+5:30)",
+  availability: "Open to full-time roles & freelance projects",
+  /** Photo on the ID card — drop an image in /public and set e.g. "/chandrani.jpg". Empty = initials. */
+  photo: "/protfolio-image.jpeg",
+  resume: "https://drive.google.com/file/d/10Hk_oyprPmj1jz1Oxei6lMIVevbU7Ol4/view?usp=drive_link",
+};
+
 export const NAV_LINKS = [
   { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
@@ -25,6 +35,10 @@ export type Project = {
   category: string;
   description: string;
   role: string;
+  /** small badge on the book page, e.g. "Client Project" */
+  kind: string;
+  /** shorter category for the badge, e.g. "E-commerce Platform" */
+  domain: string;
   contributions?: string[];
   tech: string[];
   status: string;
@@ -40,6 +54,15 @@ export const PROJECTS: Project[] = [
     description:
       "Monetization ecosystem empowering creators through 1:1 mentorship, sessions, digital products, and community interactions.",
     role: "Frontend Engineer & Product Builder",
+    kind: "Flagship Product",
+    domain: "Creator Economy",
+    // TODO(chandrani): review — drafted from the project description
+    contributions: [
+      "Built the creator and learner experiences with Next.js and TypeScript.",
+      "Developed mentorship sessions, digital products and community flows.",
+      "Integrated Better Auth for sign-in and TanStack Query for data fetching.",
+      "Shaped product decisions with the team, from wireframes to release.",
+    ],
     tech: ["Next.js", "NestJS", "TypeScript", "TanStack Query", "Better Auth", "PostgreSQL"],
     status: "Currently Building",
     highlight: "Flagship Product",
@@ -50,9 +73,17 @@ export const PROJECTS: Project[] = [
     title: "Nala Armoire",
     category: "FASHION E-COMMERCE",
     description:
-      "Modern e-commerce platform built for fashion retail focusing on speed, responsive design, and smooth user flow.",
+      "A full-fledged e-commerce platform for an ethnic wear brand, delivering a seamless shopping experience from product discovery to secure checkout.",
     role: "Full Stack Developer",
-    tech: ["Next.js", "TypeScript", "Tailwind CSS"],
+    kind: "Client Project",
+    domain: "E-commerce Platform",
+    contributions: [
+      "Designed and developed the complete frontend using Next.js and Tailwind CSS.",
+      "Integrated APIs and connected with the backend.",
+      "Implemented secure payments using Razorpay.",
+      "Focused on performance, responsiveness, and clean UI.",
+    ],
+    tech: ["Next.js", "Tailwind CSS", "Sanity", "Razorpay"],
     status: "Live",
     link: "https://nalaarmoire.com",
     image: "/nala-armoire.png",
@@ -63,6 +94,15 @@ export const PROJECTS: Project[] = [
     description:
       "E-commerce & rental platform enabling customers to order farm-fresh mangoes online or rent trees for seasonal harvest.",
     role: "Full Stack Developer",
+    kind: "Client Project",
+    domain: "Agri Commerce",
+    // TODO(chandrani): review — drafted from the project description
+    contributions: [
+      "Built the storefront and tree-rental flows with Next.js and Tailwind CSS.",
+      "Designed responsive product, cart and checkout experiences.",
+      "Connected the frontend to backend APIs for orders and rentals.",
+      "Optimised images and pages for fast, mobile-first browsing.",
+    ],
     tech: ["Next.js", "TypeScript", "Tailwind CSS"],
     status: "Live",
     link: "https://treekart.in",
@@ -94,7 +134,7 @@ export const ACADEMIC_PROJECTS: AcademicProject[] = [
       "AI-driven healthcare platform automating patient triage and clinical diagnostics with a mobile-first stack.",
     achievement: "1st Prize Winner · Vedic Vision Hackathon",
     isWinner: true,
-    bgGradient: "from-[#1e2022] via-[#161718] to-[#131314]",
+    bgGradient: "from-[#2e2017] via-[#211710] to-[#17100c]",
     keyMetric: "Cross-Platform Diagnostics",
     tech: ["React Native", "Spring Boot", "Java", "AI/ML"],
     github: "https://github.com/Ashok-Dd/healverse.git",
@@ -108,7 +148,7 @@ export const ACADEMIC_PROJECTS: AcademicProject[] = [
       "AI-powered deepfake detection extension analyzing synthetic media across social platforms in real time.",
     achievement: "5th Prize Winner · Prajwalan Hackathon",
     isWinner: true,
-    bgGradient: "from-[#201e23] via-[#171619] to-[#131314]",
+    bgGradient: "from-[#33231a] via-[#241811] to-[#17100c]",
     keyMetric: "Multi-Modal AI Inference",
     tech: ["React", "TypeScript", "Node.js", "Python"],
     github: "https://github.com/Srikar132/deep-nox.git",
@@ -122,7 +162,7 @@ export const ACADEMIC_PROJECTS: AcademicProject[] = [
       "High-performance technical blogging platform engineered for headless CMS content delivery and real-time sync.",
     achievement: "Full Stack Academic Project",
     isWinner: false,
-    bgGradient: "from-[#1d2220] via-[#151817] to-[#131314]",
+    bgGradient: "from-[#2a1f16] via-[#1f1610] to-[#17100c]",
     keyMetric: "Headless CMS & Real-Time Sync",
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Sanity"],
     link: "https://infraink.vercel.app/",

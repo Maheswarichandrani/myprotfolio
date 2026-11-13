@@ -36,11 +36,17 @@ const TARGETS_MOBILE = [
 
 function HeroTypingLines() {
   const lines = [
-    "HELLO!",
-    "HELLO I'M MAHESWARI",
-    "I'M A FULL-STACK DEVELOPER &",
-    "A FREELANCER",
-    "WELCOME TO MY PORTFOLIO!"
+    "Hello!",
+    "I'm Maheswari",
+    "Full-stack developer & Applied AI engineer",
+    "Welcome to my portfolio.",
+  ];
+  // one clear hierarchy: label → headline → role → note
+  const LINE_STYLES = [
+    "font-mono text-xs sm:text-sm font-medium uppercase tracking-[0.25em] text-rose mb-3",
+    "font-display text-[clamp(2.4rem,7vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.04em] text-foreground",
+    "mt-3 font-display text-[clamp(1.1rem,2.6vw,1.6rem)] font-medium tracking-[-0.02em] text-silver-dim",
+    "mt-4 text-sm sm:text-base text-dim",
   ];
 
   const [isReady, setIsReady] = useState(false);
@@ -80,20 +86,18 @@ function HeroTypingLines() {
   }, [isReady, currentLineIndex, currentCharIndex, lines]);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 text-center font-mono font-light uppercase tracking-[0.2em] text-foreground/90 text-xs sm:text-sm md:text-base leading-snug">
+    <div className="flex flex-col items-center justify-center text-center">
       {lines.map((line, idx) => {
-        if (idx < currentLineIndex) {
-          return <div key={idx} className="whitespace-pre-wrap">{line}</div>;
-        }
-        if (idx === currentLineIndex) {
-          return (
-            <div key={idx} className="whitespace-pre-wrap text-silver font-normal">
-              {line.slice(0, currentCharIndex)}
-              <span className="inline-block w-1.5 h-3.5 ml-1 bg-silver align-middle animate-pulse" />
-            </div>
-          );
-        }
-        return null;
+        if (idx > currentLineIndex) return null;
+        const typing = idx === currentLineIndex;
+        return (
+          <div key={idx} className={`whitespace-pre-wrap ${LINE_STYLES[idx]}`}>
+            {typing ? line.slice(0, currentCharIndex) : line}
+            {typing && (
+              <span className="ml-[0.08em] inline-block h-[0.85em] w-[2px] translate-y-[0.1em] animate-pulse bg-rose" />
+            )}
+          </div>
+        );
       })}
     </div>
   );
@@ -250,7 +254,7 @@ export default function HeroSection() {
             onMouseEnter={onEnter}
             onMouseLeave={onLeave}
             style={{ willChange: "transform, opacity" }}
-            className="photo-card absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-[4/3] w-[6.25rem] cursor-pointer overflow-hidden rounded-2xl border border-line bg-surface/50 p-1.5 backdrop-blur-[2px] sm:w-40 md:w-48 lg:w-56 xl:w-64"
+            className="photo-card absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-[4/3] w-[6.25rem] cursor-pointer overflow-hidden rounded-2xl border border-line bg-surface p-1.5 sm:w-40 md:w-48 lg:w-56 xl:w-64"
           >
             <img
               src={photo.src}
@@ -260,7 +264,7 @@ export default function HeroSection() {
                 photo.portrait ? "object-contain" : "object-cover"
               }`}
             />
-            <div className="pointer-events-none absolute bottom-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-line bg-background/75 px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.15em] text-foreground backdrop-blur-md sm:text-[9px]">
+            <div className="pointer-events-none absolute bottom-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-line bg-background/90 px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.15em] text-foreground sm:text-[9px]">
               {photo.label}
             </div>
           </div>
@@ -268,8 +272,8 @@ export default function HeroSection() {
       </div>
 
       {/* Hero Content: Thin font, reduced width, exact text from user image */}
-      <div className="hero-content relative z-20 flex w-full max-w-sm sm:max-w-md md:max-w-lg flex-col items-center text-center px-4">
-        <div className="hero-fade min-h-[10rem] sm:min-h-[12rem] flex items-center justify-center">
+      <div className="hero-content relative z-20 flex w-full max-w-sm sm:max-w-lg md:max-w-xl flex-col items-center text-center px-4">
+        <div className="hero-fade min-h-[14rem] sm:min-h-[16rem] flex items-center justify-center">
           <HeroTypingLines />
         </div>
 
@@ -277,7 +281,7 @@ export default function HeroSection() {
           <CustomButton href="#projects" isFlowing className="text-xs px-6 py-3">
             View Projects
           </CustomButton>
-          <CustomButton href="#contact" className="text-xs px-6 py-3">
+          <CustomButton href="/contact" className="text-xs px-6 py-3">
             Contact Me
           </CustomButton>
         </div>

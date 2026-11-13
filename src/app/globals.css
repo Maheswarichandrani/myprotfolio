@@ -1,53 +1,34 @@
 @import "tailwindcss";
 
-/* Define the custom dark variant for Tailwind v4 */
-@custom-variant dark (&:where(.dark, .dark *));
-
 /* Satoshi + Clash Display load via <link> tags in layout.tsx
    (Fontshare CDN — @import here gets reordered after Tailwind's rules and ignored) */
 
+/* ============================================================
+   VINTAGE JOURNAL THEME
+   Antique ivory paper · coffee ink · dark chocolate · gilt gold
+   Token names kept (silver/*) so every component re-themes itself.
+   ============================================================ */
 :root {
-  /* Google Material Light Base — Signature soft off-white (#f8f9fa) */
-  --background: #f8f9fa;
-  --surface: #ffffff;
-  --surface-2: #f1f3f4;
+  /* single theme — warm sand paper, dark brown ink, copper accent */
+  --background: #f3ebe0;      /* sand */
+  --surface: #faf5ee;         /* lifted card */
+  --surface-2: #eadfcf;
 
-  /* Google Charcoal & Muted Slate */
-  --silver: #202124;
-  --silver-dim: #5f6368;
+  --silver: #3a2a1f;          /* brown — primary highlight */
+  --silver-dim: #8a7262;
+  --foreground: #2b1d15;      /* dark chocolate ink */
+  --text-dim: #5e4a3c;
 
-  /* Primary Text — Google Dark Charcoal (#1f1f1f), Eliminating Harsh Pitch Black Glare */
-  --foreground: #1f1f1f;
-  --text-dim: #474747;
+  --gold: #a8834a;
+  --gold-soft: #d8c39b;
 
-  /* Lines & Borders — Google Divider Grey */
-  --line: rgba(32, 33, 36, 0.08);
-  --line-strong: rgba(32, 33, 36, 0.16);
-  --grid-line: rgba(32, 33, 36, 0.04);
-  --spotlight-color: rgba(32, 33, 36, 0.03);
-}
+  --rose: #a4582a;            /* copper accent (AA on sand) */
+  --rose-soft: #ead3bf;
 
-:root[class~="dark"],
-html.dark,
-.dark {
-  /* Google Material Dark Base — Classy deep charcoal slate (#131314) */
-  --background: #131314;
-  --surface: #1e1f20;
-  --surface-2: #28292c;
-
-  /* Google Soft Silver & Muted Slate */
-  --silver: #e3e2e6;
-  --silver-dim: #8e9099;
-
-  /* Primary Text — Soft Google Off-White (#e2e2e6), Eliminating Harsh Pure White Glare */
-  --foreground: #e2e2e6;
-  --text-dim: #c4c6d0;
-
-  /* Lines & Borders */
-  --line: rgba(255, 255, 255, 0.07);
-  --line-strong: rgba(255, 255, 255, 0.14);
-  --grid-line: rgba(255, 255, 255, 0.035);
-  --spotlight-color: rgba(255, 255, 255, 0.05);
+  --line: rgba(43, 29, 21, 0.1);
+  --line-strong: rgba(43, 29, 21, 0.2);
+  --grid-line: rgba(43, 29, 21, 0.06);
+  --spotlight-color: rgba(168, 131, 74, 0.1);
 }
 
 @theme inline {
@@ -61,11 +42,18 @@ html.dark,
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-grid-line: var(--grid-line);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-rose: var(--rose);
+  --color-rose-soft: var(--rose-soft);
 
-  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: "Satoshi", var(--font-inter), sans-serif;
-  --font-clash: "Clash Display", "Satoshi", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  /* body: book serif · display: high-contrast editorial serif
+     script: handwritten · mono: typewriter labels */
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-grotesk), var(--font-geist), sans-serif;
+  --font-clash: var(--font-grotesk), var(--font-geist), sans-serif;
+  --font-script: var(--font-grotesk), var(--font-geist), sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
 }
 
 html,
@@ -109,13 +97,68 @@ body.locked {
 }
 .font-clash {
   font-family: var(--font-clash);
+  letter-spacing: -0.03em;
+}
+.font-script {
+  font-family: var(--font-script);
   letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+/* Grain texture over the page — cheap version: no mix-blend-mode and promoted to
+   its own GPU layer, so the compositor just keeps it in place while scrolling
+   (the old blend-mode overlay was re-blended every frame). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.29 0 0 0 0 0.2 0 0 0 0 0.15 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+  opacity: 0.07;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+body {
+  background:
+    radial-gradient(110% 80% at 50% 0%, rgba(201, 164, 106, 0.05), transparent 60%),
+    var(--background);
+}
+
+/* gilt text + ornamental divider */
+.gold-text {
+  background: linear-gradient(180deg, var(--gold-soft), var(--gold) 55%, var(--silver) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--rose);
+}
+.rose-text {
+  background: linear-gradient(180deg, var(--rose), var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.ornament::before,
+.ornament::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  opacity: 0.6;
 }
 
 /* ---------- Selection ---------- */
 ::selection {
-  background: var(--silver);
-  color: var(--background);
+  background: var(--rose-soft);
+  color: var(--foreground);
 }
 
 /* ---------- Scrollbar ---------- */
@@ -131,7 +174,7 @@ body.locked {
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--line-strong);
+  background: var(--rose);
 }
 
 /* ---------- Hide native cursor on desktop ----------
@@ -143,7 +186,7 @@ body.locked {
 
 /* ---------- Reusable utilities ---------- */
 .silver-text {
-  background: linear-gradient(180deg, var(--foreground) 0%, var(--silver) 60%, var(--silver-dim) 100%);
+  background: linear-gradient(180deg, var(--foreground) 0%, var(--silver) 55%, var(--gold) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -227,7 +270,7 @@ body.locked {
 /* ---------- Loader silver line ---------- */
 .loader-line {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--silver) 50%, transparent);
+  background: linear-gradient(90deg, transparent, #c9a46a 50%, transparent);
   width: 100%;
 }
 
@@ -236,10 +279,6 @@ input:focus,
 textarea:focus,
 button:focus {
   outline: none;
-}
-input:focus,
-textarea:focus {
-  border-bottom-color: var(--foreground) !important;
 }
 
 @layer utilities {
@@ -271,4 +310,75 @@ textarea:focus {
 }
 .btn-silver:hover {
   background-color: var(--foreground);
+}
+
+/* ============================================================
+   PROJECT BOOK — paper pages, leather boards, washi tape
+   .paper re-scopes the theme tokens to ink-on-ivory so every
+   token utility (text-foreground, text-rose…) reads on paper.
+   ============================================================ */
+.paper {
+  --foreground: #2e1f16;
+  --text-dim: #6a5141;
+  --silver: #4a3426;
+  --silver-dim: #8a6f58;
+  --gold: #a5814b;
+  --rose: #a4582a;
+  --rose-soft: #ecd5bd;
+  --line: rgba(74, 52, 38, 0.18);
+  --line-strong: rgba(74, 52, 38, 0.32);
+  color: var(--foreground);
+  background-color: #efe0c4;
+  background-image:
+    radial-gradient(120% 90% at 50% 40%, rgba(255, 248, 232, 0.75), transparent 70%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.33 0 0 0 0 0.2 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #f2e5cc, #e6d1ae);
+}
+/* gutter shading toward the spine */
+.paper-right {
+  box-shadow: inset 28px 0 34px -22px rgba(60, 38, 22, 0.45);
+}
+.paper-left {
+  box-shadow: inset -28px 0 34px -22px rgba(60, 38, 22, 0.45);
+}
+/* stacked page edges on the outer side */
+.page-edges-right {
+  box-shadow:
+    inset 28px 0 34px -22px rgba(60, 38, 22, 0.45),
+    2px 0 0 #e4d0ab, 4px 0 0 #d4bc93, 6px 0 0 #e1cba3, 8px 0 0 #cdb38a;
+}
+
+.leather {
+  background:
+    radial-gradient(120% 80% at 30% 20%, rgba(255, 220, 170, 0.08), transparent 60%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='l'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23l)'/%3E%3C/svg%3E"),
+    linear-gradient(160deg, #4a2e1d, #2e1c12 60%, #24160e);
+}
+
+.washi {
+  background: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.18) 0 6px,
+      transparent 6px 12px
+    ),
+    rgba(226, 205, 170, 0.78);
+  box-shadow: 0 1px 2px rgba(60, 38, 22, 0.2);
+}
+
+/* 3D page leaves — each leaf owns its perspective so z-index still stacks */
+.leaf {
+  transform-style: preserve-3d;
+  transform-origin: left center;
+}
+.leaf-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.leaf-back {
+  transform: rotateY(180deg);
+}
+.page-cq {
+  container-type: size;
 }

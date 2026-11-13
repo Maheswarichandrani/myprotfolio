@@ -23,6 +23,7 @@ import {
   SiVercel,
   SiPostman,
   SiDocker,
+  SiRazorpay,
 } from "react-icons/si";
 import { FaJava } from "react-icons/fa";
 import { TbBrandReactNative } from "react-icons/tb";
@@ -58,4 +59,5 @@ export const TECH_ICONS: Record<string, IconType> = {
   "VS Code": VscVscode,
   Postman: SiPostman,
   Docker: SiDocker,
+  Razorpay: SiRazorpay,
 };
