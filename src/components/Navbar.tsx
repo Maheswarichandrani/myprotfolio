@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLenis } from "@/providers/SmoothScrollProvider";
@@ -14,6 +15,15 @@ const LINKS = [
   { label: "Academics", href: "#academic", num: "04" },
   { label: "Contact", href: "/contact", num: "05" },
 ];
+
+/** short, warm line shown on the transition curtain for each destination */
+const CURTAIN: Record<string, { label: string; note: string }> = {
+  "#top": { label: "Home", note: "Back to the beginning." },
+  "#about": { label: "01 — About", note: "Nice to meet you." },
+  "#projects": { label: "02 — Work", note: "Things I've built with care." },
+  "#skills": { label: "03 — Skills", note: "The tools I love working with." },
+  "#academic": { label: "04 — Academics", note: "Where the learning happened." },
+};
 
 const CTA = {
   label: "Resume",
@@ -39,6 +49,10 @@ export default function Navbar() {
   const [active, setActive] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const curtainRef = useRef<HTMLDivElement>(null);
+  const curtainLabelRef = useRef<HTMLParagraphElement>(null);
+  const curtainNoteRef = useRef<HTMLParagraphElement>(null);
+  const travelling = useRef(false);
   const lenis = useLenis();
   const router = useRouter();
   const pathname = usePathname();
@@ -142,17 +156,44 @@ export default function Navbar() {
     }
     const el = href === "#top" ? null : document.querySelector<HTMLElement>(href);
     if (href !== "#top" && !el) return;
-    const y = el ? el.getBoundingClientRect().top + window.scrollY : 0;
-    if (lenis) {
-      lenis.start();
-      // glide: short hops are quick, long jumps take a little longer — never abrupt
-      const distance = Math.abs(y - window.scrollY);
-      const duration = Math.min(2.2, Math.max(0.9, 0.7 + distance / 3000));
-      lenis.scrollTo(y, {
-        duration,
-        easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
-      });
-    } else window.scrollTo({ top: y, behavior: "smooth" });
+    travel(href, el);
+  };
+
+  /**
+   * Curtain transition: cover the page, jump straight to the section behind it
+   * (no long scroll through every animation), let it settle, then reveal.
+   */
+  const travel = (href: string, el: HTMLElement | null) => {
+    const curtain = curtainRef.current;
+    if (!curtain || travelling.current) return;
+    travelling.current = true;
+
+    const copy = CURTAIN[href] ?? { label: "", note: "One moment…" };
+    if (curtainLabelRef.current) curtainLabelRef.current.textContent = copy.label;
+    if (curtainNoteRef.current) curtainNoteRef.current.textContent = copy.note;
+
+    const jump = () => {
+      const y = el ? el.getBoundingClientRect().top + window.scrollY : 0;
+      if (lenis) {
+        lenis.start();
+        lenis.scrollTo(y, { immediate: true, force: true });
+      } else window.scrollTo(0, y);
+      ScrollTrigger.update();
+      setHidden(true); // the section opens clean, without the bar on top
+    };
+
+    gsap
+      .timeline({ defaults: { ease: "power3.inOut" }, onComplete: () => void (travelling.current = false) })
+      .set(curtain, { display: "flex", yPercent: 100 })
+      .set(".curtain-line", { scaleX: 0 })
+      .to(curtain, { yPercent: 0, duration: 0.7 })
+      .fromTo(".curtain-copy", { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power2.out" }, "-=0.2")
+      .add(jump)
+      // hold while scrubbed sections catch up to the new position
+      .to(".curtain-line", { scaleX: 1, duration: 0.8, ease: "power1.inOut" })
+      .to(".curtain-copy", { y: -12, opacity: 0, duration: 0.35, stagger: 0.04, ease: "power2.in" })
+      .to(curtain, { yPercent: -100, duration: 0.8 }, "-=0.1")
+      .set(curtain, { display: "none" });
   };
 
   return (
@@ -255,6 +296,22 @@ export default function Navbar() {
         </div>
       </nav>
     </header>
+
+      {/* section transition curtain */}
+      <div
+        ref={curtainRef}
+        aria-hidden
+        className="fixed inset-0 z-[90] hidden flex-col items-center justify-center bg-background px-6 text-center will-change-transform"
+      >
+        <p ref={curtainLabelRef} className="curtain-copy font-mono text-[11px] uppercase tracking-[0.3em] text-rose" />
+        <p
+          ref={curtainNoteRef}
+          className="curtain-copy mt-4 font-display text-[clamp(1.8rem,5vw,3.4rem)] font-semibold tracking-[-0.03em] text-foreground"
+        />
+        <div className="curtain-copy mt-8 h-px w-40 overflow-hidden bg-line">
+          <div className="curtain-line h-full w-full origin-left bg-rose" />
+        </div>
+      </div>
 
       {/* mobile / tablet menu — outside the header so `fixed` covers the viewport */}
       {open && (
