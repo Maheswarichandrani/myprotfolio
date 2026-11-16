@@ -3,7 +3,7 @@
 
 export default function ScrollCue() {
   return (
-    <div className="pointer-events-none absolute bottom-8 left-1/2 z-30 -translate-x-1/2">
+    <div className="pointer-events-none absolute bottom-8 left-1/2 z-30 hidden -translate-x-1/2 sm:block">
       <div className="flex flex-col items-center gap-2">
         <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-silver-dim">
           Scroll

@@ -98,10 +98,10 @@ export default function AboutSection() {
   };
 
   return (
-    <section ref={sectionRef} id="about" className="relative h-[600vh] bg-background mt-24 lg:mt-36">
+    <section ref={sectionRef} id="about" className="relative h-[440vh] bg-background mt-12 lg:mt-36 lg:h-[600vh]">
       <div className="sticky top-0 flex h-screen flex-col gap-6 overflow-hidden section-container py-8 sm:py-12 lg:flex-row lg:gap-12 lg:py-12">
         {/* image stack */}
-        <div className="relative h-[34vh] overflow-hidden rounded-3xl border border-line lg:h-auto lg:w-[58%]">
+        <div className="relative h-[38vh] shrink-0 overflow-hidden rounded-2xl border border-line sm:rounded-3xl lg:h-auto lg:w-[58%]">
           {ABOUT_SLIDES.map((slide, i) => (
             <div key={i} className="about-slide absolute inset-0 overflow-hidden">
               <div className={`about-media relative h-full w-full bg-gradient-to-br ${PLACEHOLDERS[i]} overflow-hidden`}>
@@ -145,7 +145,7 @@ export default function AboutSection() {
 
           {/* clip window — list now centers the active item instead of top-aligning it */}
           <div ref={clipRef} className="relative mt-6 min-h-0 flex-1 overflow-hidden">
-            <div ref={listRef} className="flex flex-col gap-16 will-change-transform pb-24">
+            <div ref={listRef} className="flex flex-col gap-10 will-change-transform pb-24 lg:gap-16">
               {ABOUT_SLIDES.map((slide, i) => (
                 <div key={i} onClick={() => scrollToSlide(i)} className="about-item cursor-pointer space-y-3 pb-8">
                   <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-rose font-medium">

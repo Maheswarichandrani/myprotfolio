@@ -79,6 +79,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geist.variable} ${grotesk.variable} ${mono.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        {/* runs before first paint: returning visitors never see the preloader flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("portfolio:preloaded")==="1")document.documentElement.classList.add("pl-seen")}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <Preloader />
         <SmoothScrollProvider>{children}</SmoothScrollProvider>

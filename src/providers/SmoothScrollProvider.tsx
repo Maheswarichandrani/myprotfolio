@@ -33,7 +33,9 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
     // Single rAF loop for Lenis (via gsap.ticker) → one clock, no double-driving.
     const tick = (time: number) => l.raf(time * 1000);
     gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
+    // keep lag smoothing ON: a stalled frame (hydration, image decode) must not
+    // make running tweens jump ahead — that read as a "fast glitch" on load.
+    gsap.ticker.lagSmoothing(500, 33);
     l.on("scroll", ScrollTrigger.update);
 
     // Recalc all trigger positions once late-arriving layout has settled:

@@ -16,11 +16,11 @@ export const CONTACT = {
 };
 
 export const NAV_LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Experience", href: "#experience" },
-  { label: "Skills", href: "#skills" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/#about" },
+  { label: "Work", href: "/projects" },
+  { label: "Skills", href: "/#skills" },
+  { label: "Academics", href: "/#academic" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export const SOCIAL_LINKS = [

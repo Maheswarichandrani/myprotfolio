@@ -78,9 +78,9 @@ export default function Footer() {
         Maheswari
       </span>
 
-      <div className="relative z-10 px-6 pt-16 pb-36 sm:px-10 lg:px-14 lg:pt-24 lg:pb-64">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="ft-item">
+      <div className="section-container relative z-10 pt-14 pb-28 sm:pb-36 lg:pt-24 lg:pb-64">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:gap-12 lg:grid-cols-4">
+          <div className="ft-item col-span-2 sm:col-span-1">
             <p className="font-clash text-xl font-medium text-foreground">
               {PROFILE.fullName}
             </p>
@@ -117,7 +117,7 @@ export default function Footer() {
             ))}
           </div>
 
-          <div className="ft-item">
+          <div className="ft-item col-span-2 sm:col-span-1">
             <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.3em] text-silver-dim">
               Status
             </p>
@@ -131,7 +131,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="ft-item mt-14 flex flex-col gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="ft-item mt-12 flex flex-col gap-3 sm:mt-14 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6">
             <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-dim">
               © {PROFILE.year} {PROFILE.fullName}
