@@ -293,6 +293,12 @@ button:focus {
     margin-top: clamp(6rem, 12vh, 12rem);
     margin-bottom: clamp(6rem, 12vh, 12rem);
   }
+  @media (max-width: 1023px) {
+    .section-padding {
+      padding-top: 5.5rem;
+      padding-bottom: 5.5rem;
+    }
+  }
   .section-container {
     max-width: 86rem;
     margin-left: auto;
@@ -381,4 +387,52 @@ button:focus {
 }
 .page-cq {
   container-type: size;
+}
+
+/* returning visitor: hide the preloader before first paint (class set by inline script in layout) */
+html.pl-seen .preloader-root {
+  display: none;
+}
+
+/* ============================================================
+   PROJECT BOOK (clean) - flat off-white sheets on a matte board.
+   .sheet re-scopes theme tokens like .paper, minus the vintage texture.
+   ============================================================ */
+.sheet {
+  --foreground: #231811;
+  --text-dim: #5e4a3c;
+  --silver: #3a2a1f;
+  --silver-dim: #8a7262;
+  --rose: #a4582a;
+  --line: rgba(35, 24, 17, 0.09);
+  --line-strong: rgba(35, 24, 17, 0.16);
+  color: var(--foreground);
+  background-color: #fcf9f4;
+}
+/* soft gutter toward the spine */
+.sheet-right {
+  box-shadow: inset 16px 0 20px -16px rgba(35, 24, 17, 0.2);
+}
+.sheet-left {
+  box-shadow: inset -16px 0 20px -16px rgba(35, 24, 17, 0.2);
+}
+/* thin, neutral page block on the outer edge */
+.sheet-edges-right {
+  box-shadow:
+    inset 16px 0 20px -16px rgba(35, 24, 17, 0.2),
+    1px 0 0 #e7dfd3, 2px 0 0 #fcf9f4, 3px 0 0 #e2d9cc, 4px 0 0 #fcf9f4, 5px 0 0 #d9cfc0;
+}
+.sheet-edges-left {
+  box-shadow:
+    inset -16px 0 20px -16px rgba(35, 24, 17, 0.2),
+    -1px 0 0 #e7dfd3, -2px 0 0 #fcf9f4, -3px 0 0 #e2d9cc, -4px 0 0 #fcf9f4, -5px 0 0 #d9cfc0;
+}
+.board {
+  background: linear-gradient(150deg, #2b1e16 0%, #1e150f 100%);
+}
+.board-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 8% 8%;
 }

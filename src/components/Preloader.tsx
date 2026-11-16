@@ -87,7 +87,7 @@ export default function Preloader() {
   const [first, ...rest] = PROFILE.fullName.split(" ");
 
   return (
-    <div ref={rootRef} className="fixed inset-0 z-[100] flex flex-col bg-[#f3ebe0] text-[#2b1d15] will-change-transform">
+    <div ref={rootRef} className="preloader-root fixed inset-0 z-[100] flex flex-col bg-[#f3ebe0] text-[#2b1d15] will-change-transform">
       <div className="pl-meta flex items-center justify-between px-6 pt-6 font-mono text-[11px] text-[#8a7262] sm:px-10">
         <span>{PROFILE.role}</span>
         <span>portfolio — {PROFILE.year}</span>

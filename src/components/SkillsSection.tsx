@@ -106,7 +106,8 @@ export default function SkillsSection() {
 
       // each note drops onto the board, then its pin pops in
       gsap.utils.toArray<HTMLElement>(".sk-note").forEach((note) => {
-        const tilt = Number(note.dataset.tilt ?? 0);
+        // phones: notes sit straight — tilts read as clutter on a narrow screen
+        const tilt = window.innerWidth < 640 ? 0 : Number(note.dataset.tilt ?? 0);
         const pin = note.querySelector(".sk-pin");
         const tl = gsap.timeline({ scrollTrigger: { trigger: note, start: "top 85%" } });
         tl.fromTo(
@@ -130,16 +131,49 @@ export default function SkillsSection() {
   useGSAP(
     () => {
       if (!trail.d) return;
-      // the dashed trail draws itself with scroll (revealed through a mask)
-      gsap.fromTo(
-        ".sk-trail-mask",
-        { strokeDashoffset: 1 },
-        {
-          strokeDashoffset: 0,
-          ease: "none",
-          scrollTrigger: { trigger: boardRef.current, start: "top 85%", end: "bottom 65%", scrub: 0.5 },
+      const route = sectionRef.current?.querySelector<SVGPathElement>(".sk-trail-route");
+      const mask = sectionRef.current?.querySelector<SVGPathElement>(".sk-trail-mask");
+      const dot = sectionRef.current?.querySelector<SVGGElement>(".sk-trail-dot");
+      if (!route || !mask || !dot) return;
+
+      // lookup: board-y → distance along the road (the route always runs downward)
+      const total = route.getTotalLength();
+      const SAMPLES = 240;
+      const ys: number[] = [];
+      const lens: number[] = [];
+      for (let k = 0; k <= SAMPLES; k++) {
+        const l = (k / SAMPLES) * total;
+        ys.push(route.getPointAtLength(l).y);
+        lens.push(l);
+      }
+      const lengthAtY = (y: number) => {
+        if (y <= ys[0]) return 0;
+        for (let k = 1; k <= SAMPLES; k++) {
+          if (ys[k] >= y) {
+            const t = (y - ys[k - 1]) / (ys[k] - ys[k - 1] || 1);
+            return lens[k - 1] + t * (lens[k] - lens[k - 1]);
+          }
         }
-      );
+        return total;
+      };
+
+      // the drawn tip + traveller stay level with the middle of the screen
+      const draw = (progress: number) => {
+        const l = lengthAtY(progress * trail.h);
+        mask.style.strokeDashoffset = String(1 - l / total);
+        const pt = route.getPointAtLength(l);
+        dot.setAttribute("transform", `translate(${pt.x} ${pt.y})`);
+        dot.style.opacity = progress > 0 && progress < 1 ? "1" : "0";
+      };
+
+      draw(0);
+      ScrollTrigger.create({
+        trigger: boardRef.current,
+        start: "top center",
+        end: "bottom center",
+        onUpdate: (self) => draw(self.progress),
+        onRefresh: (self) => draw(self.progress),
+      });
     },
     { scope: sectionRef, dependencies: [trail.d] }
   );
@@ -156,7 +190,7 @@ export default function SkillsSection() {
       <div className="section-container relative">
         <div className="text-center">
           <p className="sk-head font-mono text-[11px] uppercase tracking-[0.3em] text-rose">Skills &amp; Tools</p>
-          <h2 className="sk-head mt-3 font-display text-[clamp(2rem,4.4vw,3.6rem)] font-semibold leading-[1.02] tracking-[-0.04em] text-foreground">
+          <h2 className="sk-head mt-3 font-display text-[clamp(2rem,8vw,3.6rem)] font-semibold leading-[1.02] tracking-[-0.04em] text-foreground">
             The stack I build with
           </h2>
           <p className="sk-head mx-auto mt-4 max-w-[46ch] text-sm leading-relaxed text-dim lg:text-base">
@@ -164,7 +198,7 @@ export default function SkillsSection() {
           </p>
         </div>
 
-        <div ref={boardRef} className="relative mx-auto mt-16 max-w-4xl lg:mt-20">
+        <div ref={boardRef} className="relative mt-14 lg:mt-20">
           {/* dashed trail, behind the notes */}
           {trail.d && (
             <svg
@@ -190,6 +224,7 @@ export default function SkillsSection() {
               </defs>
               {/* full route, always visible but quiet */}
               <path
+                className="sk-trail-route"
                 d={trail.d}
                 fill="none"
                 stroke="var(--line-strong)"
@@ -208,6 +243,11 @@ export default function SkillsSection() {
                 strokeLinecap="round"
                 mask="url(#sk-trail-reveal)"
               />
+              {/* traveller — rides the tip of the road with the reader */}
+              <g className="sk-trail-dot" style={{ opacity: 0, transition: "opacity 0.3s ease" }}>
+                <circle r="11" fill="var(--rose)" opacity="0.15" />
+                <circle r="5" fill="var(--rose)" stroke="var(--background)" strokeWidth="2" />
+              </g>
             </svg>
           )}
 
@@ -217,11 +257,11 @@ export default function SkillsSection() {
               return (
                 <div
                   key={n.title}
-                  className={`flex ${right ? "justify-end" : "justify-start"} ${i > 0 ? "mt-8 sm:-mt-10" : ""}`}
+                  className={`flex justify-center ${right ? "sm:justify-end" : "sm:justify-start"} ${i > 0 ? "mt-10 sm:-mt-10" : ""}`}
                 >
                   <article
                     data-tilt={n.tilt}
-                    className="sk-note relative w-[88%] sm:w-[68%] md:w-[56%] lg:w-[48%]"
+                    className="sk-note relative w-full sm:w-[68%] md:w-[52%] lg:w-[42%]"
                     style={{ transform: `rotate(${n.tilt}deg)` }}
                   >
                     {/* pushpin */}

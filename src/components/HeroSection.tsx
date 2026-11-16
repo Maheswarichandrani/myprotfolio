@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { LUXE } from "@/lib/ease";
@@ -16,22 +17,25 @@ const PHOTOS = [
   { id: "event-participation", src: "/event_participation.png", label: "Hackathon Finalist" },
 ];
 
+/* x = fraction of the free space inside the page container (±1 = card edge on the
+   container edge), so the cards line up with every other section's width. */
 const TARGETS_DESKTOP = [
-  { x: "-29vw", y: "-29vh", r: -6 },
-  { x: "29vw", y: "-29vh", r: 6 },
-  { x: "39vw", y: "3vh", r: 4 },
-  { x: "25vw", y: "31vh", r: -5 },
-  { x: "-25vw", y: "31vh", r: 5 },
-  { x: "-39vw", y: "3vh", r: -4 },
+  { x: -0.78, y: "-29vh", r: -6 },
+  { x: 0.78, y: "-29vh", r: 6 },
+  { x: 1, y: "3vh", r: 4 },
+  { x: 0.62, y: "31vh", r: -5 },
+  { x: -0.62, y: "31vh", r: 5 },
+  { x: -1, y: "3vh", r: -4 },
 ];
 
+/* phones: two tidy rows of three — above and below the intro, never over it */
 const TARGETS_MOBILE = [
-  { x: "-25vw", y: "-29vh", r: -5 },
-  { x: "25vw", y: "-29vh", r: 5 },
-  { x: "0vw", y: "-37vh", r: -3 },
-  { x: "25vw", y: "30vh", r: -4 },
-  { x: "-25vw", y: "30vh", r: 4 },
-  { x: "0vw", y: "38vh", r: 3 },
+  { x: -1, y: "-30vh", r: -4 },
+  { x: 1, y: "-30vh", r: 4 },
+  { x: 0, y: "-33vh", r: -2 },
+  { x: 1, y: "30vh", r: -3 },
+  { x: -1, y: "30vh", r: 3 },
+  { x: 0, y: "33vh", r: 2 },
 ];
 
 function HeroTypingLines() {
@@ -54,15 +58,15 @@ function HeroTypingLines() {
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
 
   useEffect(() => {
-    const preloaderDone = () =>
-      (window as Window & { __preloaderDone?: boolean }).__preloaderDone === true;
+    // typing starts the moment the hero text is revealed (see HeroSection timeline)
+    const shown = () => (window as Window & { __heroShown?: boolean }).__heroShown === true;
 
-    if (preloaderDone()) {
+    if (shown()) {
       setIsReady(true);
     } else {
       const onReady = () => setIsReady(true);
-      window.addEventListener("preloader:done", onReady, { once: true });
-      return () => window.removeEventListener("preloader:done", onReady);
+      window.addEventListener("hero:shown", onReady, { once: true });
+      return () => window.removeEventListener("hero:shown", onReady);
     }
   }, []);
 
@@ -103,6 +107,11 @@ function HeroTypingLines() {
   );
 }
 
+const announceHeroShown = () => {
+  (window as Window & { __heroShown?: boolean }).__heroShown = true;
+  window.dispatchEvent(new CustomEvent("hero:shown"));
+};
+
 export default function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -112,15 +121,24 @@ export default function HeroSection() {
       const HERO_CONTENT = ".hero-content";
       const HERO_FADES = ".hero-fade";
 
+      /** px offset from centre for a container fraction (same box as .section-container content) */
+      const xFor = (f: number, card: HTMLElement) => {
+        const el = containerRef.current!;
+        const pad = parseFloat(getComputedStyle(el).paddingLeft) || 0;
+        const inner = Math.min(el.clientWidth, 86 * 16) - pad * 2;
+        return f * Math.max(0, inner / 2 - card.offsetWidth / 2);
+      };
+
       const remember = (targets: typeof TARGETS_DESKTOP) =>
         cards.forEach((c, i) => c.setAttribute("data-rotate", String(targets[i].r)));
 
       const settleInstantly = (targets: typeof TARGETS_DESKTOP) => {
         remember(targets);
         cards.forEach((card, i) =>
-          gsap.set(card, { x: targets[i].x, y: targets[i].y, rotation: targets[i].r, scale: 1, autoAlpha: 1 })
+          gsap.set(card, { x: xFor(targets[i].x, card), y: targets[i].y, rotation: targets[i].r, scale: 1, autoAlpha: 1 })
         );
         gsap.set([HERO_CONTENT, HERO_FADES], { autoAlpha: 1, y: 0 });
+        announceHeroShown();
       };
 
       const play = (targets: typeof TARGETS_DESKTOP) => {
@@ -134,7 +152,7 @@ export default function HeroSection() {
         }));
 
         cards.forEach((card, i) =>
-          gsap.set(card, { x: 0, y: 0, rotation: 0, scale: 0.6, autoAlpha: 0, zIndex: stack[i].z })
+          gsap.set(card, { x: 0, y: 0, rotation: 0, scale: 0.6, autoAlpha: 0, zIndex: stack[i].z, force3D: true })
         );
         gsap.set(HERO_CONTENT, { autoAlpha: 0 });
         gsap.set(HERO_FADES, { autoAlpha: 0, y: 28 });
@@ -150,34 +168,57 @@ export default function HeroSection() {
               rotation: stack[i].r,
               scale: 1,
               autoAlpha: 1,
-              duration: 0.55,
-              ease: "back.out(1.7)",
+              duration: 1.0,
+              ease: "back.out(1.15)",
             },
-            i === 0 ? 0 : ">-0.30"
+            i === 0 ? 0 : ">-0.55"
           );
         });
 
-        tl.to({}, { duration: 0.4 });
+        tl.to({}, { duration: 0.6 });
 
         cards.forEach((card, i) => {
           tl.to(
             card,
-            { x: targets[i].x, y: targets[i].y, rotation: targets[i].r, zIndex: 10, duration: 1.2 },
-            i === 0 ? ">" : "<0.06"
+            { x: () => xFor(targets[i].x, card), y: targets[i].y, rotation: targets[i].r, duration: 1.8, ease: "power3.inOut" },
+            i === 0 ? ">" : "<0.07"
           );
         });
 
-        tl.to(HERO_CONTENT, { autoAlpha: 1, duration: 0.1 }, "-=0.95");
-        tl.to(HERO_FADES, { autoAlpha: 1, y: 0, stagger: 0.12, duration: 0.9 }, "-=0.8");
+        tl.set(cards, { zIndex: 10 });
+        tl.to(HERO_CONTENT, { autoAlpha: 1, duration: 0.1 }, "-=1.1");
+        tl.call(() => setTimeout(announceHeroShown, 0), undefined, "<");
+        tl.to(HERO_FADES, { autoAlpha: 1, y: 0, stagger: 0.15, duration: 1.1 }, "-=1.0");
 
         return tl;
       };
 
       const preloaderDone = () =>
         (window as Window & { __preloaderDone?: boolean }).__preloaderDone === true;
+      const imagesReady = () => {
+        const imgs = Array.from(
+          containerRef.current?.querySelectorAll<HTMLImageElement>(".photo-card img") ?? []
+        );
+        const loaded = Promise.all(
+          imgs.map((img) =>
+            img.complete
+              ? img.decode().catch(() => {})
+              : new Promise<void>((res) => {
+                  img.addEventListener("load", () => res(), { once: true });
+                  img.addEventListener("error", () => res(), { once: true });
+                })
+          )
+        );
+        // never wait forever on a slow network
+        return Promise.race([loaded, new Promise((r) => setTimeout(r, 2500))]);
+      };
       const whenReady = (fn: () => void) => {
-        if (preloaderDone()) fn();
-        else window.addEventListener("preloader:done", fn, { once: true });
+        const start = () =>
+          imagesReady().then(() =>
+            requestAnimationFrame(() => requestAnimationFrame(() => fn()))
+          );
+        if (preloaderDone()) start();
+        else window.addEventListener("preloader:done", start, { once: true });
       };
 
       const mm = gsap.matchMedia();
@@ -199,8 +240,17 @@ export default function HeroSection() {
             return;
           }
 
-          const tl = play(isDesktop ? TARGETS_DESKTOP : TARGETS_MOBILE);
+          const targets = isDesktop ? TARGETS_DESKTOP : TARGETS_MOBILE;
+          const tl = play(targets);
           whenReady(() => tl.play(0));
+
+          // keep settled cards on the container edges when the window is resized
+          const onResize = () => {
+            if (tl.progress() < 1) return;
+            cards.forEach((card, i) => gsap.set(card, { x: xFor(targets[i].x, card) }));
+          };
+          window.addEventListener("resize", onResize);
+          return () => window.removeEventListener("resize", onResize);
         }
       );
     },
@@ -233,7 +283,7 @@ export default function HeroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-background px-6 sm:px-12 lg:px-20 py-28 sm:py-36 lg:py-44"
+      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-background px-[clamp(1.5rem,6vw,5rem)] py-28 sm:py-36 lg:py-44"
     >
       {/* Background grid */}
       <div
@@ -254,17 +304,20 @@ export default function HeroSection() {
             onMouseEnter={onEnter}
             onMouseLeave={onLeave}
             style={{ willChange: "transform, opacity" }}
-            className="photo-card absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-[4/3] w-[6.25rem] cursor-pointer overflow-hidden rounded-2xl border border-line bg-surface p-1.5 sm:w-40 md:w-48 lg:w-56 xl:w-64"
+            className="photo-card invisible absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-[4/3] w-[6.5rem] cursor-pointer overflow-hidden rounded-xl border border-line bg-surface p-1 shadow-[0_14px_28px_-18px_rgba(43,29,21,0.45)] sm:w-40 sm:rounded-2xl sm:p-1.5 md:w-48 lg:w-56 xl:w-64"
           >
-            <img
-              src={photo.src}
-              alt={photo.label}
-              draggable={false}
-              className={`h-full w-full select-none rounded-xl ${
-                photo.portrait ? "object-contain" : "object-cover"
-              }`}
-            />
-            <div className="pointer-events-none absolute bottom-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-line bg-background/90 px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.15em] text-foreground sm:text-[9px]">
+            <div className="relative h-full w-full overflow-hidden rounded-lg sm:rounded-xl">
+              <Image
+                src={photo.src}
+                alt={photo.label}
+                fill
+                preload
+                draggable={false}
+                sizes="(min-width: 1280px) 256px, (min-width: 1024px) 224px, (min-width: 768px) 192px, 160px"
+                className={`select-none ${photo.portrait ? "object-contain" : "object-cover"}`}
+              />
+            </div>
+            <div className="pointer-events-none absolute bottom-2.5 left-1/2 hidden -translate-x-1/2 whitespace-nowrap sm:block rounded-full border border-line bg-background/90 px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.15em] text-foreground sm:text-[9px]">
               {photo.label}
             </div>
           </div>
@@ -272,12 +325,12 @@ export default function HeroSection() {
       </div>
 
       {/* Hero Content: Thin font, reduced width, exact text from user image */}
-      <div className="hero-content relative z-20 flex w-full max-w-sm sm:max-w-lg md:max-w-xl flex-col items-center text-center px-4">
-        <div className="hero-fade min-h-[14rem] sm:min-h-[16rem] flex items-center justify-center">
+      <div className="hero-content invisible relative z-20 flex w-full max-w-sm sm:max-w-lg md:max-w-xl flex-col items-center text-center px-4">
+        <div className="hero-fade flex min-h-[12.5rem] items-center justify-center sm:min-h-[16rem]">
           <HeroTypingLines />
         </div>
 
-        <div className="hero-fade mt-8 flex flex-wrap items-center justify-center gap-4">
+        <div className="hero-fade mt-6 flex w-full flex-wrap items-center justify-center gap-3 sm:mt-8 sm:gap-4">
           <CustomButton href="#projects" isFlowing className="text-xs px-6 py-3">
             View Projects
           </CustomButton>

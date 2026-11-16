@@ -1,10 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { LuArrowLeft, LuArrowRight, LuArrowUpRight, LuChevronRight } from "react-icons/lu";
+import ProjectsTeaser from "@/components/projects/ProjectsTeaser";
 import { PROJECTS, PROFILE, type Project } from "@/data/profile";
 import { TECH_ICONS } from "@/lib/tech-icons";
 import { useRouter } from "next/navigation";
@@ -14,7 +16,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 /* ------------------------------------------------------------------
    Book model
-   leaf 0       front = leather cover        back = left page of P1
+   leaf 0       front = cover board        back = left page of P1
    leaf j (1…N) front = right page of Pj     back = left page of P(j+1) | closing left
    base board   right page under everything  = closing right page
    Spreads: 0 closed · 1…N projects · N+1 closing
@@ -54,7 +56,7 @@ function Label({ children, className = "" }: { children: React.ReactNode; classN
 }
 
 function PageNo({ n }: { n: number }) {
-  return <span className="font-mono text-[min(1.8cqw,1.7cqh)] text-[#8a6f58]">p. {pad(n)}</span>;
+  return <span className="font-mono text-[min(1.8cqw,1.7cqh)] tabular-nums text-[#8a7262]">{pad(n)}</span>;
 }
 
 /** Screenshot inside a minimal browser window. */
@@ -65,20 +67,20 @@ function BrowserShot({ p }: { p: Project }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`Open ${p.title}`}
-      className="group block overflow-hidden rounded-[min(1.4cqw,1.3cqh)] border border-[#4a3426]/15 bg-[#fbf6ec] shadow-[0_20px_40px_-18px_rgba(46,31,22,0.55)] transition-transform duration-500 ease-out hover:-translate-y-1"
+      className="group block overflow-hidden rounded-[min(1.4cqw,1.3cqh)] border border-[#231811]/10 bg-white shadow-[0_18px_36px_-22px_rgba(35,24,17,0.45)] transition-transform duration-500 ease-out hover:-translate-y-1"
     >
-      <div className="flex items-center gap-[1.6cqw] border-b border-[#4a3426]/10 px-[2cqw] py-[1.1cqh]">
+      <div className="flex items-center gap-[1.6cqw] border-b border-[#231811]/[0.07] px-[2cqw] py-[1.1cqh]">
         <span className="flex gap-[0.8cqw]">
           {[0, 1, 2].map((d) => (
-            <span key={d} className="h-[min(1.2cqw,1.1cqh)] w-[min(1.2cqw,1.1cqh)] rounded-full bg-[#4a3426]/20" />
+            <span key={d} className="h-[min(1.2cqw,1.1cqh)] w-[min(1.2cqw,1.1cqh)] rounded-full bg-[#231811]/15" />
           ))}
         </span>
-        <span className="flex-1 truncate rounded-full bg-[#4a3426]/[0.06] px-[2cqw] py-[0.3cqh] text-center font-mono text-[min(1.7cqw,1.6cqh)] text-[#6a5141]">
+        <span className="flex-1 truncate rounded-full bg-[#231811]/[0.05] px-[2cqw] py-[0.3cqh] text-center font-mono text-[min(1.7cqw,1.6cqh)] text-[#6f5a4b]">
           {host(p.link)}
         </span>
       </div>
-      <div className="aspect-[16/10] overflow-hidden bg-[#2b1d15]">
-        <img src={p.image} alt={p.title} loading="lazy" className="h-full w-full object-cover" />
+      <div className="relative aspect-[16/10] overflow-hidden bg-[#2b1d15]">
+        <Image src={p.image} alt={p.title} fill sizes="(min-width: 1280px) 560px, 45vw" className="object-cover" />
       </div>
     </a>
   );
@@ -86,28 +88,65 @@ function BrowserShot({ p }: { p: Project }) {
 
 /* ---------- pages ---------- */
 
+const LIVE = PROJECTS.filter((p) => p.status === "Live").length;
+const COVER_STATS = [
+  { k: "Products", v: pad(N) },
+  { k: "Live", v: pad(LIVE) },
+  { k: "In build", v: pad(N - LIVE) },
+];
+
 function CoverPage() {
   return (
-    <div className="leather page-cq relative h-full w-full overflow-hidden rounded-r-[14px] rounded-l-[4px] shadow-[0_40px_80px_-30px_rgba(43,29,21,0.35)]">
-      <div className="absolute inset-y-0 left-0 w-[6%] bg-gradient-to-r from-black/45 via-black/10 to-transparent" />
-      <div className="absolute inset-[6%] left-[10%] rounded-[6px] border border-[#c9a46a]/35" />
+    <div className="board page-cq relative h-full w-full overflow-hidden rounded-r-[16px] rounded-l-[6px] shadow-[0_40px_80px_-36px_rgba(35,24,17,0.45)]">
+      {/* spine hinge */}
+      <div className="absolute inset-y-0 left-0 w-[3.5%] bg-gradient-to-r from-black/35 to-transparent" />
+      <div className="absolute inset-y-0 left-[3.5%] w-px bg-white/[0.06]" />
 
-      <div className="relative flex h-full flex-col justify-between py-[12%] pl-[17%] pr-[10%]">
-        <p className="font-mono text-[min(1.9cqw,1.8cqh)] uppercase tracking-[0.3em] text-[#c9a46a]/80">
-          Portfolio · Vol. 01
-        </p>
-        <div>
-          <h3 className="font-display text-[min(10cqw,9cqh)] font-semibold leading-[0.95] tracking-[-0.04em] text-[#f1e6d2]">
+      {/* oversized outlined count — the one bold gesture on the cover */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -bottom-[6%] -right-[4%] select-none font-display text-[min(62cqw,58cqh)] font-semibold leading-none tracking-[-0.06em] text-transparent"
+        style={{ WebkitTextStroke: "1px rgba(246,239,230,0.09)" }}
+      >
+        {pad(N)}
+      </span>
+
+      <div className="relative flex h-full flex-col py-[9%] pl-[12%] pr-[9%]">
+        <div className="flex items-center justify-between font-mono text-[min(1.8cqw,1.7cqh)] uppercase tracking-[0.25em] text-[#f6efe6]/50">
+          <span>Selected Work</span>
+          <span>{PROFILE.year}</span>
+        </div>
+
+        <div className="my-auto">
+          <span className="inline-flex items-center gap-[1.4cqw] rounded-full border border-white/10 px-[2cqw] py-[0.8cqh] font-mono text-[min(1.7cqw,1.6cqh)] uppercase tracking-[0.2em] text-[#f6efe6]/70">
+            <span className="relative flex h-[min(1.3cqw,1.2cqh)] w-[min(1.3cqw,1.2cqh)]">
+              <span className="absolute inset-0 animate-ping rounded-full bg-[#7fb069]/60" />
+              <span className="relative h-full w-full rounded-full bg-[#7fb069]" />
+            </span>
+            Running in production
+          </span>
+          <h3 className="mt-[3.5cqh] font-display text-[min(11cqw,10cqh)] font-semibold leading-[0.92] tracking-[-0.05em] text-[#f6efe6]">
             Selected
             <br />
-            <span className="text-[#c9a46a]">Works</span>
+            Works<span className="text-[#d9915a]">.</span>
           </h3>
-          <div className="mt-[3cqh] h-px w-[18cqw] bg-[#c9a46a]/50" />
-          <p className="mt-[3cqh] max-w-[30ch] text-[min(2.8cqw,2.6cqh)] leading-relaxed text-[#cdb99d]">
-            Client projects and products running in production.
+          <p className="mt-[3cqh] max-w-[30ch] text-[min(2.7cqw,2.5cqh)] leading-relaxed text-[#f6efe6]/55">
+            Real products, real users — designed, built and shipped end to end.
           </p>
         </div>
-        <p className="font-mono text-[min(1.7cqw,1.6cqh)] uppercase tracking-[0.25em] text-[#a88f72]">{PROFILE.fullName}</p>
+
+        <dl className="flex border-t border-white/10 pt-[3cqh]">
+          {COVER_STATS.map((s, i) => (
+            <div key={s.k} className={`flex flex-1 flex-col-reverse ${i ? "border-l border-white/10 pl-[4cqw]" : ""}`}>
+              <dt className="mt-[1.2cqh] font-mono text-[min(1.6cqw,1.5cqh)] uppercase tracking-[0.2em] text-[#f6efe6]/45">
+                {s.k}
+              </dt>
+              <dd className="font-display text-[min(5cqw,4.6cqh)] font-semibold leading-none tracking-[-0.03em] text-[#f6efe6]">
+                {s.v}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </div>
   );
@@ -183,9 +222,9 @@ function RightPage({ p, i }: { p: Project; i: number }) {
             return (
               <span
                 key={t}
-                className="inline-flex items-center gap-[1cqw] rounded-[min(1cqw,1cqh)] border border-line-strong bg-[#fbf6ec]/60 px-[1.6cqw] py-[0.7cqh] font-mono text-[min(2cqw,1.9cqh)] text-foreground"
+                className="inline-flex items-center gap-[1cqw] rounded-[min(1cqw,1cqh)] border border-line bg-white/80 px-[1.6cqw] py-[0.7cqh] font-mono text-[min(2cqw,1.9cqh)] text-foreground"
               >
-                {Icon && <Icon className="h-[min(2.2cqw,2.1cqh)] w-[min(2.2cqw,2.1cqh)] text-[#4a3426]" />}
+                {Icon && <Icon className="h-[min(2.2cqw,2.1cqh)] w-[min(2.2cqw,2.1cqh)] text-[#3a2a1f]" />}
                 {t}
               </span>
             );
@@ -200,7 +239,7 @@ function RightPage({ p, i }: { p: Project; i: number }) {
             href={p.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-[1cqw] rounded-[min(1.2cqw,1.1cqh)] bg-foreground px-[2.6cqw] py-[1.1cqh] text-[min(2.5cqw,2.4cqh)] font-medium text-[#f3e6cc] transition-colors duration-300 hover:bg-rose"
+            className="group inline-flex items-center gap-[1cqw] rounded-[min(1.2cqw,1.1cqh)] bg-foreground px-[2.6cqw] py-[1.1cqh] text-[min(2.5cqw,2.4cqh)] font-medium text-[#fcf9f4] transition-colors duration-300 hover:bg-rose"
           >
             Visit live site
             <LuArrowUpRight className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -246,7 +285,7 @@ function ClosingRight({ onContact }: { onContact: (e: React.MouseEvent<HTMLAncho
       <a
         href="/contact"
         onClick={onContact}
-        className="group mt-[5cqh] inline-flex items-center gap-[1.4cqw] self-start rounded-[min(1.2cqw,1.1cqh)] bg-foreground px-[3.6cqw] py-[1.6cqh] text-[min(2.8cqw,2.65cqh)] font-medium text-[#f3e6cc] transition-colors duration-300 hover:bg-rose"
+        className="group mt-[5cqh] inline-flex items-center gap-[1.4cqw] self-start rounded-[min(1.2cqw,1.1cqh)] bg-foreground px-[3.6cqw] py-[1.6cqh] text-[min(2.8cqw,2.65cqh)] font-medium text-[#fcf9f4] transition-colors duration-300 hover:bg-rose"
       >
         Get in touch
         <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -315,24 +354,6 @@ export default function ProjectsSection() {
         };
       });
 
-      // ---- mobile / tablet: journal pages that settle into place
-      mm.add("(max-width: 1023px)", () => {
-        gsap.utils.toArray<HTMLElement>(".journal-card").forEach((card, i) => {
-          gsap.fromTo(
-            card,
-            { y: 50, opacity: 0, rotation: i % 2 ? 1.5 : -1.5 },
-            {
-              y: 0,
-              opacity: 1,
-              rotation: 0,
-              duration: 1.1,
-              ease: "power2.out",
-              scrollTrigger: { trigger: card, start: "top 88%" },
-            }
-          );
-        });
-      });
-
       return () => mm.revert();
     },
     { scope: sectionRef }
@@ -380,8 +401,8 @@ export default function ProjectsSection() {
         <div className="relative h-[min(calc(100svh-230px),62vw)] w-full">
           <div ref={bookRef} className="relative h-full w-full will-change-transform">
             {/* right board + closing right page (bottom of the stack) */}
-            <div className="leather absolute inset-y-0 left-1/2 z-0 w-1/2 rounded-r-[14px] shadow-[0_40px_80px_-30px_rgba(43,29,21,0.35)]">
-              <div className="paper page-edges-right absolute bottom-[12px] left-0 right-[14px] top-[12px] rounded-r-[6px]">
+            <div className="board absolute inset-y-0 left-1/2 z-0 w-1/2 rounded-r-[16px] shadow-[0_40px_80px_-36px_rgba(35,24,17,0.45)]">
+              <div className="sheet sheet-edges-right absolute bottom-[10px] left-0 right-[12px] top-[10px] rounded-r-[8px]">
                 <ClosingRight onContact={toContact} />
               </div>
             </div>
@@ -390,29 +411,26 @@ export default function ProjectsSection() {
             <div className="leaf absolute inset-y-0 left-1/2 w-1/2">
               <div className="leaf-face">
                 <CoverPage />
-                <div className="shade-front pointer-events-none absolute inset-0 rounded-r-[14px] bg-gradient-to-r from-black/70 to-black/20 opacity-0" />
+                <div className="shade-front pointer-events-none absolute inset-0 rounded-r-[16px] bg-gradient-to-r from-black/40 to-black/10 opacity-0" />
               </div>
-              <div className="leaf-face leaf-back leather rounded-l-[14px]">
-                <div
-                  className="paper paper-left absolute bottom-[12px] left-[14px] right-0 top-[12px] rounded-l-[6px]"
-                  style={{ boxShadow: "inset -28px 0 34px -22px rgba(60,38,22,0.45), -2px 0 0 #e4d0ab, -4px 0 0 #d4bc93, -6px 0 0 #e1cba3, -8px 0 0 #cdb38a" }}
-                >
+              <div className="leaf-face leaf-back board rounded-l-[16px]">
+                <div className="sheet sheet-edges-left absolute bottom-[10px] left-[12px] right-0 top-[10px] rounded-l-[8px]">
                   <LeftPage p={PROJECTS[0]} i={0} />
                 </div>
-                <div className="shade-back pointer-events-none absolute inset-0 rounded-l-[14px] bg-gradient-to-l from-black/60 to-transparent" />
+                <div className="shade-back pointer-events-none absolute inset-0 rounded-l-[16px] bg-gradient-to-l from-black/30 to-transparent" />
               </div>
             </div>
 
-            {/* leaves 1…N — paper pages */}
+            {/* leaves 1…N — sheets */}
             {PROJECTS.map((p, j) => (
-              <div key={p.title} className="leaf absolute bottom-[12px] left-1/2 top-[12px] w-[calc(50%-14px)]">
-                <div className="leaf-face paper paper-right rounded-r-[6px]">
+              <div key={p.title} className="leaf absolute bottom-[10px] left-1/2 top-[10px] w-[calc(50%-12px)]">
+                <div className="leaf-face sheet sheet-right rounded-r-[8px]">
                   <RightPage p={p} i={j} />
-                  <div className="shade-front pointer-events-none absolute inset-0 bg-gradient-to-r from-[#3c2616]/60 to-[#3c2616]/10 opacity-0" />
+                  <div className="shade-front pointer-events-none absolute inset-0 bg-gradient-to-r from-[#231811]/30 to-[#231811]/5 opacity-0" />
                 </div>
-                <div className="leaf-face leaf-back paper paper-left rounded-l-[6px]">
+                <div className="leaf-face leaf-back sheet sheet-left rounded-l-[8px]">
                   {j + 1 < N ? <LeftPage p={PROJECTS[j + 1]} i={j + 1} /> : <ClosingLeft />}
-                  <div className="shade-back pointer-events-none absolute inset-0 bg-gradient-to-l from-[#3c2616]/55 to-transparent" />
+                  <div className="shade-back pointer-events-none absolute inset-0 bg-gradient-to-l from-[#231811]/25 to-transparent" />
                 </div>
               </div>
             ))}
@@ -445,95 +463,8 @@ export default function ProjectsSection() {
         </p>
       </div>
 
-      {/* ================= mobile / tablet ================= */}
-      <div className="section-container section-padding lg:hidden">
-        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-rose">Client Work</p>
-        <h2 className="mt-3 font-clash text-[clamp(1.85rem,7vw,2.8rem)] font-semibold leading-[1.1] text-foreground">
-          Products in Production
-        </h2>
-
-        <div className="mt-12 flex flex-col gap-10">
-          {PROJECTS.map((p, i) => (
-            <article
-              key={p.title}
-              className="journal-card paper relative overflow-hidden rounded-2xl px-5 pb-6 pt-5 shadow-[0_30px_60px_-30px_rgba(43,29,21,0.35)] sm:px-8"
-            >
-              <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.18em]">
-                <span className="text-rose">Project / {pad(i + 1)}</span>
-                <span className="flex items-center gap-1.5 text-[#6a5141]">
-                  <span className={`h-1.5 w-1.5 rounded-full ${p.status === "Live" ? "bg-[#5f8a4e]" : "bg-[#c9a46a]"}`} />
-                  {p.status}
-                </span>
-              </div>
-
-              <a
-                href={p.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 block overflow-hidden rounded-lg border border-[#4a3426]/15 bg-[#fbf6ec] shadow-[0_14px_24px_-12px_rgba(46,31,22,0.5)]"
-              >
-                <div className="flex items-center gap-2 border-b border-[#4a3426]/10 px-3 py-2">
-                  <span className="flex gap-1">
-                    {[0, 1, 2].map((d) => (
-                      <span key={d} className="h-1.5 w-1.5 rounded-full bg-[#4a3426]/20" />
-                    ))}
-                  </span>
-                  <span className="flex-1 truncate text-center font-mono text-[10px] text-[#6a5141]">{host(p.link)}</span>
-                </div>
-                <img src={p.image} alt={p.title} loading="lazy" className="aspect-[16/10] w-full object-cover" />
-              </a>
-
-              <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-rose">{p.category}</p>
-              <h3 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{p.title}</h3>
-              <p className="mt-3 text-[15px] leading-relaxed text-foreground/80">{p.description}</p>
-
-              {p.contributions?.length ? (
-                <>
-                  <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-[#8a6f58]">What I did</p>
-                  <ul className="mt-2 space-y-2">
-                    {p.contributions.map((c) => (
-                      <li key={c} className="flex gap-2.5">
-                        <LuChevronRight className="mt-1 h-3.5 w-3.5 shrink-0 text-rose" />
-                        <span className="text-[14px] leading-snug text-foreground/80">{c}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : null}
-
-              <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.2em] text-[#8a6f58]">Stack</p>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {p.tech.map((t) => {
-                  const Icon = TECH_ICONS[t];
-                  return (
-                    <span
-                      key={t}
-                      className="inline-flex items-center gap-1.5 rounded-md border border-line-strong bg-[#fbf6ec]/60 px-2 py-1 font-mono text-[11px] text-foreground"
-                    >
-                      {Icon && <Icon className="h-3 w-3 text-[#4a3426]" />}
-                      {t}
-                    </span>
-                  );
-                })}
-              </div>
-
-              <div className="mt-6 flex items-center justify-between gap-4 border-t border-line pt-4">
-                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#8a6f58]">{p.role}</span>
-                {p.link && (
-                  <a
-                    href={p.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md bg-foreground px-3 py-2 text-sm font-medium text-[#f3e6cc]"
-                  >
-                    Visit site <LuArrowUpRight />
-                  </a>
-                )}
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
+      {/* ================= mobile / tablet: one inviting door to /projects ================= */}
+      <ProjectsTeaser />
     </section>
   );
 }
